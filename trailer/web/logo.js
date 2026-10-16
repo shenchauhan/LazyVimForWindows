@@ -40,6 +40,8 @@
             spin: (rand() - 0.5) * 6,
             scale: 0.2 + rand() * 2.4,
             delay: (c / COLS) * 0.55 + rand() * 0.45,
+            // A mostly left-to-right order for the gentle "rise" assembly.
+            wave: (c / COLS) * 0.8 + rand() * 0.2,
           });
         } else if (ch !== ' ') {
           this.strokes.push({ c, r, ch, delay: (c / COLS) * 0.7 + rand() * 0.3 });
@@ -49,8 +51,10 @@
     }
 
     /**
-     * o: { x, y, cw, ch, assemble (0..1), shadow (0..1), glow (0..1), alpha, top, bottom, line, spread, blur }
-     * (x, y) is the top-left of the wordmark.
+     * o: { x, y, cw, ch, assemble (0..1), shadow (0..1), glow (0..1), alpha, top, bottom, line, spread, blur,
+     *      turbulence (0..1, scales block spin and size jitter), from ('center' | 'below') }
+     * (x, y) is the top-left of the wordmark. With from: 'below', blocks rise gently into place in a
+     * left-to-right wave instead of flying in from the middle.
      */
     draw(ctx, o) {
       if ((o.blur ?? 0) > 0.05) {
@@ -77,6 +81,8 @@
       const assemble = o.assemble ?? 1;
       const alpha = o.alpha ?? 1;
       const spread = o.spread ?? 1100;
+      const turbulence = o.turbulence ?? 1;
+      const rise = o.from === 'below';
       const ease = o.ease ?? ((p) => p * p * p);
       const w = this.cols * cw;
       const h = this.rows * ch;
@@ -89,7 +95,7 @@
         grad.addColorStop(1, o.bottom ?? '#6d8ef5');
         g.fillStyle = grad;
         for (const b of this.blocks) {
-          const p = clamp((assemble - b.delay * 0.5) / 0.5);
+          const p = clamp((assemble - (rise ? b.wave : b.delay) * 0.5) / 0.5);
           if (p <= 0) continue;
           const e = ease(p);
           const tx = x + b.c * cw;
@@ -99,15 +105,16 @@
             g.fillRect(tx, ty, cw + 0.6, ch + 0.6);
             continue;
           }
-          const sx = cx + Math.cos(b.angle) * b.dist * spread;
-          const sy = cy + Math.sin(b.angle) * b.dist * spread * 0.62;
+          const sx = rise ? tx + Math.cos(b.angle) * spread * 0.12 : cx + Math.cos(b.angle) * b.dist * spread;
+          const sy = rise ? ty + spread * (0.35 + 0.5 * (b.dist - 0.55)) : cy + Math.sin(b.angle) * b.dist * spread * 0.62;
           const px = sx + (tx - sx) * e;
           const py = sy + (ty - sy) * e;
-          const s = b.scale + (1 - b.scale) * e;
+          const s0 = 1 + (b.scale - 1) * turbulence;
+          const s = s0 + (1 - s0) * e;
           g.save();
-          g.globalAlpha = alpha * clamp(p * 4);
+          g.globalAlpha = alpha * clamp(p * (rise ? 1.6 : 4));
           g.translate(px + cw / 2, py + ch / 2);
-          g.rotate(b.spin * (1 - e));
+          g.rotate(b.spin * turbulence * (1 - e));
           g.scale(s, s);
           g.fillRect(-cw / 2, -ch / 2, cw + 0.6, ch + 0.6);
           g.restore();

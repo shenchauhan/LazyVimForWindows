@@ -11,7 +11,7 @@ import { loadTimeline } from './lib/timeline.mjs';
 import { writeWavFloat } from './lib/wav.mjs';
 
 // Loudness targets (LUFS). Music is measured only while the narrator is speaking.
-export const MIX = { voice: -16, musicUnderVoice: -16, sfx: -27, master: -14, ceiling: 0.79 };
+export const MIX = { voice: -16, musicUnderVoice: -15, sfx: -30, master: -14, ceiling: 0.79 };
 
 async function renderStems(timeline) {
   const { server, url } = await startServer();

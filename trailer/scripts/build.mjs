@@ -43,7 +43,7 @@ if (!preview) {
   const browser = await launchBrowser();
   try {
     const page = await openTrailerPage(browser, url, timeline);
-    await page.evaluate((t) => window.TRAILER.seek(t), timeline.events.finalHit - 0.6);
+    await page.evaluate((t) => window.TRAILER.seek(t), timeline.events.finalChord - 0.4);
     await page.screenshot({ path: join(BUILD, 'poster.png') });
   } finally {
     await browser.close();

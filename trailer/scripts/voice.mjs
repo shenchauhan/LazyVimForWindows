@@ -7,6 +7,7 @@ import { join } from 'node:path';
 import { getSpeechCredentials, synthesize, transcribe } from './lib/azure.mjs';
 import { findUntranscribedSpeech, tightenTake, writeWav16 } from './lib/edit.mjs';
 import { BUILD, ROOT } from './lib/paths.mjs';
+import { analyzeProsody } from './lib/prosody.mjs';
 import { readWav } from './lib/wav.mjs';
 
 const VOICE_DIR = join(ROOT, 'assets', 'voice');
@@ -60,6 +61,26 @@ async function recordTake(credentials, ssml, locale) {
   return { text, words, audio: readWav(tmp) };
 }
 
+/**
+ * How far a take's prosody strays from the delivery target: semitones above the pitch ceiling
+ * (sounds hyped) plus distance outside the pitch-movement band (too flat, or sing-song).
+ */
+function deliveryPenalty(p, { maxPitchHz, pitchSd } = {}) {
+  let penalty = 0;
+  if (maxPitchHz && p.medianHz > maxPitchHz) penalty += 12 * Math.log2(p.medianHz / maxPitchHz);
+  if (pitchSd) {
+    const [lo, hi] = pitchSd;
+    if (p.sdSt < lo) penalty += 2 * (lo - p.sdSt);
+    if (p.sdSt > hi) penalty += p.sdSt - hi;
+  }
+  return penalty;
+}
+
+function describeProsody(take) {
+  const p = take.prosody;
+  return `${Math.round(p.medianHz)} Hz ±${p.sdSt.toFixed(1)} st`;
+}
+
 const script = JSON.parse(readFileSync(join(ROOT, 'script.json'), 'utf8'));
 mkdirSync(VOICE_DIR, { recursive: true });
 mkdirSync(RAW_DIR, { recursive: true });
@@ -69,7 +90,9 @@ let credentials;
 for (const line of script.lines) {
   const ssml = buildSsml(script.voice, line);
   const edit = { maxPause: line.maxPause ?? 0.4, keepPause: line.keepPause ?? 0.3 };
-  const hash = createHash('sha256').update(ssml).digest('hex').slice(0, 16);
+  const wanted = line.takes ?? script.voice.takes ?? 1;
+  const delivery = { ...script.voice.delivery, ...line.delivery };
+  const hash = createHash('sha256').update(ssml + JSON.stringify({ wanted, delivery })).digest('hex').slice(0, 16);
   const editHash = createHash('sha256').update(JSON.stringify(edit)).digest('hex').slice(0, 8);
   const file = join(VOICE_DIR, `${line.id}.wav`);
   const rawFile = join(RAW_DIR, `${line.id}-${hash}.wav`);
@@ -85,8 +108,8 @@ for (const line of script.lines) {
     take = { ...JSON.parse(readFileSync(`${rawFile}.json`, 'utf8')), audio: readWav(rawFile) };
   } else {
     credentials ??= getSpeechCredentials();
-    // Collect `takes` clean takes (default 1) and keep the snappiest; retake anything that fails review.
-    const wanted = line.takes ?? 1;
+    // Collect `takes` clean takes and keep the one closest to the delivery target (then the
+    // snappiest); anything that fails review is retaken.
     const clean = [];
     let best;
     for (let n = 1; n <= MAX_TAKES + wanted - 1 && clean.length < wanted; n++) {
@@ -96,13 +119,23 @@ for (const line of script.lines) {
       if (!candidate.problems.length) {
         const { sampleRate, channels } = candidate.audio;
         candidate.length = tightenTake(channels[0], sampleRate, candidate.words, edit).samples.length;
+        candidate.prosody = analyzeProsody(channels[0], sampleRate);
+        candidate.penalty = deliveryPenalty(candidate.prosody, delivery);
         clean.push(candidate);
       } else {
         console.warn(`  ${line.id} take ${n}: "${candidate.text}" -> ${candidate.problems.join('; ')}`);
       }
     }
-    if (clean.length) best = clean.sort((a, b) => a.length - b.length)[0];
-    else console.warn(`! ${line.id} kept a take with issues: ${best.problems.join('; ')}`);
+    if (clean.length) {
+      const mid = delivery.pitchSd ? (delivery.pitchSd[0] + delivery.pitchSd[1]) / 2 : 0;
+      clean.sort((a, b) => a.penalty - b.penalty
+        || (mid ? Math.abs(a.prosody.sdSt - mid) - Math.abs(b.prosody.sdSt - mid) : 0)
+        || a.length - b.length);
+      best = clean[0];
+      if (clean.length > 1) console.log(`  ${line.id} takes: ${clean.map((c, i) => `${describeProsody(c)}${i ? '' : ' (kept)'}`).join(', ')}`);
+    } else {
+      console.warn(`! ${line.id} kept a take with issues: ${best.problems.join('; ')}`);
+    }
     take = best;
     writeWav16(rawFile, take.audio.channels[0], take.audio.sampleRate);
     writeFileSync(`${rawFile}.json`, JSON.stringify({ text: take.text, words: take.words }, null, 2));
@@ -111,6 +144,8 @@ for (const line of script.lines) {
   const { sampleRate, channels } = take.audio;
   const tight = tightenTake(channels[0], sampleRate, take.words, edit);
   writeWav16(file, tight.samples, sampleRate);
+  const prosody = analyzeProsody(tight.samples, sampleRate);
+  const spoken = tight.words.length ? tight.words.at(-1).end - tight.words[0].start : 0;
   manifest[line.id] = {
     hash,
     editHash,
@@ -118,11 +153,12 @@ for (const line of script.lines) {
     duration: +(tight.samples.length / sampleRate).toFixed(3),
     rawDuration: +(channels[0].length / sampleRate).toFixed(3),
     transcript: take.text,
+    prosody: { ...prosody, wordsPerSecond: spoken ? +(tight.words.length / spoken).toFixed(2) : 0 },
     words: tight.words,
   };
   writeFileSync(MANIFEST, JSON.stringify(manifest, null, 2) + '\n');
   const e = manifest[line.id];
-  console.log(`+ ${line.id.padEnd(11)} ${e.duration.toFixed(2)}s (raw ${e.rawDuration.toFixed(2)}s)  "${e.transcript}"`);
+  console.log(`+ ${line.id.padEnd(11)} ${e.duration.toFixed(2)}s  ${describeProsody(e)}  "${e.transcript}"`);
 }
 
 const ids = new Set(script.lines.map((l) => l.id));

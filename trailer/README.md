@@ -1,6 +1,6 @@
 # 🎬 LazyVim for Windows — Trailer
 
-A ~67-second, energetic trailer for this project, plus the fully reproducible pipeline that makes it.
+A ~71-second trailer for this project with a relaxed, friendly tone, plus the fully reproducible pipeline that makes it.
 
 - **Video:** [`dist/LazyVim-for-Windows-trailer.mp4`](dist/LazyVim-for-Windows-trailer.mp4) (1920×1080, 60 fps, H.264 + AAC)
 - **Poster frame:** [`dist/poster.png`](dist/poster.png)
@@ -23,11 +23,11 @@ flowchart LR
   R --> F
 ```
 
-1. **Narration** — `scripts/voice.mjs` sends each line of `script.json` to Azure Speech using the `en-US-Ethan:MAI-Voice-2.1-Flash` voice with per-line emotion styles (confused, disgusted, sad, excited, joyful, relieved). Every take is transcribed with Azure fast transcription, and takes with missing, extra, or stuttered words are re-recorded automatically. Long pauses are tightened, and the word timestamps are kept so visuals can land on specific words.
-2. **Timeline** — `scripts/lib/timeline.mjs` lays the lines out scene by scene on a 124 BPM grid. The two musical drops are anchored to words, so the beat hits exactly on “**Lazy**Vim” and “**Boom!**”.
-3. **Cue sheet** — `web/cues.js` turns the timeline into the moments everything else keys off (tool chips popping as they are named, sound effects, the music arrangement). Visuals and audio share it, so they cannot drift apart.
-4. **Music and sound** — `web/audio.js` composes an original electro-pop score (I–V–vi–IV in D major) and all sound effects with the Web Audio API in an `OfflineAudioContext`. The music is automatically ducked and EQ-carved under the voice. `scripts/audio.mjs` measures the stems (ITU-R BS.1770) so the bed sits roughly 10–16 dB under the narrator, then masters the mix to -14 LUFS with a -1.5 dBTP ceiling.
-5. **Visuals** — `web/trailer.html` and `web/trailer.js` draw every frame as a pure function of time. `scripts/render.mjs` screenshots frames in parallel headless Edge workers and encodes them with x264.
+1. **Narration** — `scripts/voice.mjs` sends each line of `script.json` to Azure Speech using the `en-US-Ethan:MAI-Voice-2.1-Flash` voice with gentle per-line emotion styles (confused, disgusted, regretful, hopeful, happy, relieved). Every take is transcribed with Azure fast transcription, and takes with missing, extra, or stuttered words are re-recorded automatically. Each line is recorded three times and the take closest to the delivery target is kept: a relaxed pitch (median at or below 135 Hz, so nothing sounds hyped) that still moves (a pitch spread of 2.5–5 semitones, so nothing sounds monotone). Long pauses are tightened, and the word timestamps are kept so visuals can land on specific words.
+2. **Timeline** — `scripts/lib/timeline.mjs` lays the lines out scene by scene on a 100 BPM grid. Musical entrances are anchored to words: the band comes in on “**Lazy**Vim”, and the groove returns on “And **there** it is” as the dashboard appears.
+3. **Cue sheet** — `web/cues.js` turns the timeline into the moments everything else keys off (tool chips appearing as they are named, sound effects, the music arrangement). Visuals and audio share it, so they cannot drift apart.
+4. **Music and sound** — `web/audio.js` composes an original, laid-back electric-piano groove (I–vi–IV–V in D major with sevenths) and all sound effects with the Web Audio API in an `OfflineAudioContext`. The arrangement grows and relaxes with the story: a light pizzicato intro, a warm pad under the hook, keys with soft kick and finger snaps, an arpeggio and bells for the feature tour (the bells only play in the narrator's pauses), a drum-free breakdown for “Relax”, and a gentle build back in for the reveal. The music is ducked and EQ-carved under the voice. `scripts/audio.mjs` measures the stems (ITU-R BS.1770) so the bed sits roughly 11–18 dB under the narrator, then masters the mix to -14 LUFS with a -1.5 dBTP ceiling.
+5. **Visuals** — `web/trailer.html` and `web/trailer.js` draw every frame as a pure function of time, using eased fades and drifts rather than whips, flashes, or camera shake. `scripts/render.mjs` screenshots frames in parallel headless Edge workers and encodes them with x264.
 
 ## 🛠️ Rebuilding
 
@@ -58,7 +58,7 @@ The script finds credentials in this order:
 2. `SPEECH_RESOURCE` and `SPEECH_RESOURCE_GROUP` (key fetched with the Azure CLI)
 3. A Speech resource tagged `purpose=lazyvim-trailer` in the current subscription
 
-Line options in `script.json`: `style` (an `mstts:express-as` style), `rate` (SSML prosody, for example `+8%`), `takes` (record several clean takes and keep the snappiest), and `maxPause`/`keepPause` (pause tightening).
+Line options in `script.json`: `style` (an `mstts:express-as` style), `rate` (SSML prosody, for example `+8%`), `takes` (how many clean takes to compare), `delivery` (`maxPitchHz` and `pitchSd` targets used to pick the take; defaults come from `voice`), and `maxPause`/`keepPause` (pause tightening). Each line's measured pitch and speaking rate are saved in `assets/voice/manifest.json`.
 
 ### Other handy commands
 

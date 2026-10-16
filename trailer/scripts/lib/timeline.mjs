@@ -22,8 +22,8 @@ function wordOnset(file, word) {
 }
 
 /**
- * Lays the narration out scene by scene. Scene ends snap to the music grid and anchored words
- * land exactly on bar lines so drops hit on the key words.
+ * Lays the narration out scene by scene. Scene ends snap to the music grid, and anchored words
+ * restart the grid so musical entrances land exactly on key words.
  */
 export function buildTimeline(script, manifest, { fps = 60 } = {}) {
   const beat = 60 / script.music.bpm;
@@ -69,9 +69,9 @@ export function buildTimeline(script, manifest, { fps = 60 } = {}) {
       cursor = lineStart + entry.duration;
     }
     if (scene.endBars) {
-      // End on a musical hit right after the last word, then let it ring for `endBars` bars.
-      anchors.finalHit = round(snapUp(cursor + 0.15, 4));
-      t = anchors.finalHit + scene.endBars * 4 * beat;
+      // Land a closing chord right after the last word, then let it ring for `endBars` bars.
+      anchors.finalChord = round(snapUp(cursor + 0.15, 4));
+      t = anchors.finalChord + scene.endBars * 4 * beat;
     } else {
       t = snapUp(cursor + (scene.tail ?? 0), scene.snap ?? 1);
     }
@@ -100,12 +100,15 @@ export function buildTimeline(script, manifest, { fps = 60 } = {}) {
     scenes,
     lines,
     events: {
-      tapeStop: sceneById.struggle.end,
-      drop: anchors['hook-2'],
+      // The intro music winds down here, before the hook.
+      introEnd: sceneById.struggle.end,
+      // The band comes in on "LazyVim".
+      title: anchors['hook-2'],
       buildStart: sceneById.launch.start,
-      boom: anchors['launch-2'],
+      // The dashboard appears on "there it is".
+      reveal: anchors['launch-2'],
       outro: sceneById.cta.start,
-      finalHit: anchors.finalHit ?? round(t),
+      finalChord: anchors.finalChord ?? round(t),
       end: round(t),
     },
   };

@@ -51,7 +51,6 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 #particles, #fx { position: absolute; left: 0; top: 0; }
 #particles { left: 60px; top: 60px; }
 #fx { pointer-events: none; }
-#flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
 #vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, .55) 100%); }
 #fade { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; }
 
@@ -160,7 +159,7 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 .calendar .page.mon em { background: #565f89; }
 
 /* ---------- hook / cta typography ---------- */
-.mega { left: 0; width: 1920px; top: 380px; text-align: center; font: 900 200px/1 var(--ui); letter-spacing: -0.03em; color: #fff; text-shadow: 0 0 60px rgba(122, 162, 247, .6); }
+.mega { left: 0; width: 1920px; top: 470px; text-align: center; font: 600 104px/1 var(--ui); letter-spacing: -0.02em; color: #e6ebff; text-shadow: 0 0 40px rgba(122, 162, 247, .25); }
 .subtitle { left: 0; width: 1920px; top: 640px; text-align: center; font: 600 84px/1 var(--ui); color: var(--fg); letter-spacing: -0.01em; }
 #ct-sub { top: 500px; font-size: 72px; }
 .win-grad, .grad { background: linear-gradient(90deg, #2b8cff, #7dcfff 60%, #9ece6a); -webkit-background-clip: text; background-clip: text; color: transparent; padding-bottom: .16em; }
@@ -182,7 +181,7 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 #cm-k1 { top: 250px; }
 #cm-k2 { top: 400px; }
 #cm-k3 { top: 550px; }
-.kinetic.accent { color: var(--green); text-shadow: 0 0 50px rgba(158, 206, 106, .45); }
+.kinetic.accent { color: var(--green); text-shadow: 0 0 30px rgba(158, 206, 106, .2); }
 .keycap {
   left: 1500px; top: 760px; width: 230px; height: 150px; border-radius: 22px;
   background: linear-gradient(#3b4261, #24283b); border: 2px solid #565f89;

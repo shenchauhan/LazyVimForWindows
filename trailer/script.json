@@ -2,45 +2,47 @@
   "voice": {
     "name": "en-US-Ethan",
     "model": "MAI-Voice-2.1-Flash",
-    "locale": "en-US"
+    "locale": "en-US",
+    "takes": 3,
+    "delivery": { "maxPitchHz": 135, "pitchSd": [2.5, 5] }
   },
   "lines": [
-    { "id": "struggle-1", "style": "confused", "text": "Setting up Neovim on Windows?" },
+    { "id": "struggle-1", "style": "confused", "delivery": { "maxPitchHz": 160 }, "text": "Setting up Neovim on Windows?" },
     { "id": "struggle-2", "style": "disgusted", "text": "Compilers, PATH variables, 47 browser tabs." },
-    { "id": "struggle-3", "style": "sad", "text": "And there goes your weekend." },
-    { "id": "hook-1", "style": "excited", "text": "Not anymore!" },
-    { "id": "hook-2", "style": "excited", "text": "Meet LazyVim for Windows!" },
-    { "id": "command", "style": "joyful", "rate": "+8%", "text": "One script. One command. That's it!" },
-    { "id": "winget", "style": "excited", "rate": "+8%", "takes": 3, "text": "Powered by WinGet, it installs Neovim, Git, a C compiler, Tree-sitter, and lightning-fast search tools. All on its own!" },
-    { "id": "arch", "style": "joyful", "rate": "+12%", "text": "x64, x86, or ARM64? It detects your machine and picks the right compiler." },
-    { "id": "safe", "style": "relieved", "rate": "+8%", "text": "Already have a config? Relax. It's backed up first. Safe by default." },
-    { "id": "launch-1", "style": "excited", "text": "Then fire up Neovim, and..." },
-    { "id": "launch-2", "style": "excited", "text": "Boom!" },
-    { "id": "launch-3", "style": "joyful", "text": "A gorgeous, batteries-included editor, ready to roll." },
-    { "id": "cta", "style": "excited", "text": "LazyVim for Windows. Less setup. More coding. Grab it on GitHub today!" }
+    { "id": "struggle-3", "style": "regretful", "text": "And there goes your weekend." },
+    { "id": "hook-1", "style": "hopeful", "text": "There's an easier way." },
+    { "id": "hook-2", "style": "happy", "text": "Meet LazyVim for Windows." },
+    { "id": "command", "style": "happy", "text": "One script. One command. That's it." },
+    { "id": "winget", "style": "hopeful", "text": "It uses WinGet to install Neovim, Git, a C compiler, Tree-sitter, and the search tools LazyVim relies on." },
+    { "id": "arch", "style": "happy", "text": "x64, x86, or ARM64? It detects your machine and picks the right compiler." },
+    { "id": "safe", "style": "relieved", "text": "Already have a config? Relax. It's backed up first. Safe by default." },
+    { "id": "launch-1", "style": "hopeful", "text": "Then start Neovim..." },
+    { "id": "launch-2", "style": "happy", "text": "And there it is." },
+    { "id": "launch-3", "style": "happy", "text": "A complete, batteries-included editor, ready when you are." },
+    { "id": "cta", "style": "happy", "text": "LazyVim for Windows. Less setup, more coding. You'll find it on GitHub." }
   ],
-  "music": { "bpm": 124 },
+  "music": { "bpm": 100 },
   "scenes": [
     {
-      "id": "struggle", "leadIn": 0.6, "tail": 0.5, "snap": 1,
-      "lines": [{ "id": "struggle-1" }, { "id": "struggle-2", "gap": 0.3 }, { "id": "struggle-3", "gap": 0.35 }]
+      "id": "struggle", "leadIn": 0.6, "tail": 0.6, "snap": 1,
+      "lines": [{ "id": "struggle-1" }, { "id": "struggle-2", "gap": 0.35 }, { "id": "struggle-3", "gap": 0.4 }]
     },
     {
-      "id": "hook", "leadIn": 0.35, "tail": 1.5, "snap": 4,
-      "lines": [{ "id": "hook-1" }, { "id": "hook-2", "gap": 0.3, "anchor": { "word": "Lazy", "reset": true } }]
+      "id": "hook", "leadIn": 0.6, "tail": 1.4, "snap": 2,
+      "lines": [{ "id": "hook-1" }, { "id": "hook-2", "gap": 0.7, "anchor": { "word": "Lazy", "reset": true } }]
     },
-    { "id": "command", "leadIn": 0.35, "tail": 0.5, "snap": 2, "lines": [{ "id": "command" }] },
-    { "id": "winget", "leadIn": 0.3, "tail": 0.75, "snap": 2, "lines": [{ "id": "winget" }] },
-    { "id": "arch", "leadIn": 0.3, "tail": 0.6, "snap": 2, "lines": [{ "id": "arch" }] },
-    { "id": "safe", "leadIn": 0.3, "tail": 0.3, "snap": 2, "lines": [{ "id": "safe" }] },
+    { "id": "command", "leadIn": 0.4, "tail": 0.6, "snap": 2, "lines": [{ "id": "command" }] },
+    { "id": "winget", "leadIn": 0.35, "tail": 0.8, "snap": 2, "lines": [{ "id": "winget" }] },
+    { "id": "arch", "leadIn": 0.35, "tail": 0.7, "snap": 2, "lines": [{ "id": "arch" }] },
+    { "id": "safe", "leadIn": 0.35, "tail": 0.5, "snap": 2, "lines": [{ "id": "safe" }] },
     {
-      "id": "launch", "leadIn": 0.3, "tail": 1.6, "snap": 4,
+      "id": "launch", "leadIn": 0.35, "tail": 1.6, "snap": 2,
       "lines": [
         { "id": "launch-1" },
-        { "id": "launch-2", "gap": 0.45, "anchor": { "word": "Boom", "reset": true } },
-        { "id": "launch-3", "gap": 0.35 }
+        { "id": "launch-2", "gap": 1.0, "anchor": { "word": "there", "reset": true } },
+        { "id": "launch-3", "gap": 0.4 }
       ]
     },
-    { "id": "cta", "leadIn": 0.35, "endBars": 1, "lines": [{ "id": "cta" }] }
+    { "id": "cta", "leadIn": 0.4, "endBars": 1, "lines": [{ "id": "cta" }] }
   ]
 }

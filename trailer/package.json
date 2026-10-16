@@ -1,0 +1,23 @@
+{
+  "name": "lazyvim-for-windows-trailer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Source and build pipeline for the LazyVim for Windows trailer.",
+  "type": "module",
+  "scripts": {
+    "voice": "node scripts/voice.mjs",
+    "build": "node scripts/build.mjs",
+    "build:preview": "node scripts/build.mjs --preview",
+    "audio": "node scripts/audio.mjs",
+    "stills": "node scripts/stills.mjs",
+    "preview": "node scripts/preview.mjs",
+    "qa": "node scripts/qa.mjs"
+  },
+  "dependencies": {
+    "ffmpeg-static": "5.3.0",
+    "playwright-core": "1.64.0"
+  },
+  "allowScripts": {
+    "ffmpeg-static@5.3.0": true
+  }
+}

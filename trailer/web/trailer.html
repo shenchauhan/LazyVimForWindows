@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LazyVim for Windows — Trailer</title>
+<link rel="stylesheet" href="trailer.css">
+</head>
+<body>
+<div id="viewport">
+<div id="stage">
+  <div id="world">
+    <div id="bg">
+      <div class="blob" id="blob1"></div>
+      <div class="blob" id="blob2"></div>
+      <div class="blob" id="blob3"></div>
+      <div id="floor"></div>
+      <canvas id="particles" width="1920" height="1080"></canvas>
+    </div>
+
+    <!-- 1. The struggle -->
+    <section class="scene" id="s-struggle">
+      <div class="browser" id="st-browser">
+        <div class="browser-tabs" id="st-tabs"></div>
+        <div class="browser-bar"><span class="lock">🔒</span><span class="url">bing.com/search?q=how+to+install+neovim+on+windows+compiler+error</span></div>
+        <div class="browser-page">
+          <div class="result"><i></i><b style="width:62%"></b><span style="width:88%"></span><span style="width:70%"></span></div>
+          <div class="result"><i></i><b style="width:48%"></b><span style="width:92%"></span><span style="width:55%"></span></div>
+          <div class="result"><i></i><b style="width:70%"></b><span style="width:80%"></span><span style="width:64%"></span></div>
+        </div>
+        <div class="counter" id="st-count">47</div>
+      </div>
+      <div class="win term" id="st-term">
+        <div class="titlebar">
+          <div class="tab"><span class="ps-icon">&gt;_</span>PowerShell<span class="x">✕</span></div>
+          <span class="plus">+</span>
+          <div class="controls"><i class="min"></i><i class="max"></i><i class="close"></i></div>
+        </div>
+        <pre class="term-body" id="st-body"></pre>
+      </div>
+      <div class="toast" id="st-compiler">
+        <div class="toast-title"><span class="bad">✖</span> ERROR <span class="src">nvim-treesitter</span></div>
+        <div class="toast-body">No C compiler found! "cc", "gcc", "clang", "cl", "zig" are not executable.</div>
+      </div>
+      <div class="dialog" id="st-path">
+        <div class="dtitle">Edit environment variable<span class="dx">✕</span></div>
+        <div class="dmain">
+          <div class="dlist" id="st-pathlist">
+            <div>C:\Program Files\PowerShell\7\</div>
+            <div>%USERPROFILE%\AppData\Local\Microsoft\WindowsApps</div>
+            <div class="sel">C:\msys64\ucrt64\bin</div>
+            <div>C:\tools\neovim\nvim-win64\bin</div>
+            <div>C:\Users\you\scoop\shims</div>
+            <div>C:\ProgramData\chocolatey\bin</div>
+            <div>C:\tools\fzf</div>
+            <div>C:\what\is\this\bin ???</div>
+          </div>
+          <div class="dbtns"><span>New</span><span>Edit</span><span>Browse...</span><span>Delete</span><span>Move Up</span><span>Move Down</span></div>
+        </div>
+        <div class="dfoot"><span class="primary">OK</span><span>Cancel</span></div>
+      </div>
+      <div class="calendar" id="st-cal">
+        <div class="cal-ring"></div>
+        <div class="page mon"><em>MON</em><b>19</b><small>back to work</small></div>
+        <div class="page" id="st-sun"><em>SUN</em><b>18</b><small>weekend</small></div>
+        <div class="page" id="st-sat"><em>SAT</em><b>17</b><small>weekend</small></div>
+      </div>
+    </section>
+
+    <!-- 2. The hook -->
+    <section class="scene" id="s-hook">
+      <div class="mega" id="hk-not">Not anymore!</div>
+      <div class="subtitle" id="hk-sub">for <span class="win-grad">Windows</span></div>
+    </section>
+
+    <!-- 3 & 4. One command, powered by WinGet -->
+    <section class="scene" id="s-command">
+      <div class="kinetic" id="cm-k1">One script.</div>
+      <div class="kinetic" id="cm-k2">One command.</div>
+      <div class="kinetic accent" id="cm-k3">That's it! <span class="emoji">✨</span></div>
+      <div class="keycap" id="cm-enter"><span>Enter</span><b>⏎</b></div>
+    </section>
+    <section class="scene" id="s-winget">
+      <div class="badge" id="wg-badge"><span class="emoji">📦</span> Powered by <b>WinGet</b></div>
+      <div class="chips" id="wg-chips">
+        <div class="chip" data-k="neovim" style="--c:#9ece6a"><div class="ico glyph n">N</div><div><b>Neovim</b><small>the editor</small></div><i class="check">✓</i></div>
+        <div class="chip" data-k="git" style="--c:#ff9e64"><div class="ico glyph"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="6" cy="5" r="2.6"/><circle cx="6" cy="19" r="2.6"/><circle cx="18" cy="7" r="2.6"/><path d="M6 7.6v8.8M18 9.6c0 4.5-6.5 3.5-11 7"/></svg></div><div><b>Git</b><small>version control</small></div><i class="check">✓</i></div>
+        <div class="chip" data-k="compiler" style="--c:#7aa2f7"><div class="ico glyph">C</div><div><b>C compiler</b><small>matched to your CPU</small></div><i class="check">✓</i></div>
+        <div class="chip" data-k="treesitter" style="--c:#73daca"><div class="ico emoji">🌳</div><div><b>Tree-sitter</b><small>syntax superpowers</small></div><i class="check">✓</i></div>
+        <div class="chip" data-k="fd" style="--c:#e0af68"><div class="ico emoji">📂</div><div><b>fd</b><small>find files fast</small></div><i class="check">✓</i></div>
+        <div class="chip" data-k="fzf" style="--c:#bb9af7"><div class="ico emoji">🔍</div><div><b>fzf</b><small>fuzzy finder</small></div><i class="check">✓</i></div>
+        <div class="chip" data-k="ripgrep" style="--c:#f7768e"><div class="ico emoji">⚡</div><div><b>ripgrep</b><small>search everything</small></div><i class="check">✓</i></div>
+      </div>
+    </section>
+    <div class="win term" id="term">
+      <div class="titlebar">
+        <div class="tab"><span class="ps-icon">&gt;_</span>PowerShell<span class="x">✕</span></div>
+        <span class="plus">+</span>
+        <div class="controls"><i class="min"></i><i class="max"></i><i class="close"></i></div>
+      </div>
+      <pre class="term-body" id="term-body"></pre>
+    </div>
+
+    <!-- 5. Architecture -->
+    <section class="scene" id="s-arch">
+      <div class="kicker" id="ar-kicker">Smart about your hardware</div>
+      <div class="cards">
+        <div class="card" id="ar-c0"><div class="cpu"><span>64</span></div><b>x64</b><small>WinLibs GCC · x86_64</small><i class="tag">✓ DETECTED</i></div>
+        <div class="card" id="ar-c1"><div class="cpu"><span>86</span></div><b>x86</b><small>WinLibs GCC · i686</small><i class="tag">✓ DETECTED</i></div>
+        <div class="card" id="ar-c2"><div class="cpu"><span>ARM</span></div><b>ARM64</b><small>LLVM-MinGW · aarch64</small><i class="tag">✓ DETECTED</i></div>
+      </div>
+      <div class="scanner" id="ar-scan"></div>
+      <div class="ccline" id="ar-cc"><span class="k">CC</span> = <span id="ar-cctext"></span><span class="cursor"></span></div>
+    </section>
+
+    <!-- 6. Safe by default -->
+    <section class="scene" id="s-safe">
+      <div class="folder-wrap" id="sf-orig">
+        <div class="papers" id="sf-papers"><span>init.lua</span><span>lua/</span><span>plugins/</span><span class="fresh">💤 LazyVim starter</span></div>
+        <div class="folder"><div class="folder-tab"></div><div class="folder-body"></div></div>
+        <div class="flabel"><small>%LOCALAPPDATA%\</small><b id="sf-name">nvim</b></div>
+      </div>
+      <div class="folder-wrap" id="sf-copy">
+        <div class="folder"><div class="folder-tab"></div><div class="folder-body"></div></div>
+        <div class="lockbadge">🔒</div>
+        <div class="flabel"><small>%LOCALAPPDATA%\</small><b>nvim.bak.20261015-214028</b></div>
+      </div>
+      <div class="relax" id="sf-relax">Relax. <span class="emoji">😌</span></div>
+      <div class="shield-wrap" id="sf-shield">
+        <svg viewBox="0 0 200 230" class="shield"><defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9ece6a"/><stop offset="1" stop-color="#2ac3de"/></linearGradient></defs><path d="M100 8 L184 40 V112 C184 166 148 204 100 222 C52 204 16 166 16 112 V40 Z" fill="url(#sg)"/><path d="M100 26 L168 52 V112 C168 156 140 188 100 204 C60 188 32 156 32 112 V52 Z" fill="#1a1b26" opacity=".25"/><path d="M62 116 L90 144 L142 88" fill="none" stroke="#fff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="shield-text">Safe by default</div>
+      </div>
+    </section>
+
+    <!-- 7. Launch -->
+    <section class="scene" id="s-launch">
+      <div class="nvim-frame" id="ln-frame">
+        <div class="dash" id="ln-dash">
+          <canvas id="ln-logo" width="1920" height="1080"></canvas>
+          <div class="dash-menu" id="ln-menu">
+            <div><i>⌕</i><span>Find File</span><b>f</b></div>
+            <div><i>＋</i><span>New File</span><b>n</b></div>
+            <div><i>▤</i><span>Projects</span><b>p</b></div>
+            <div><i>≡</i><span>Find Text</span><b>g</b></div>
+            <div><i>◷</i><span>Recent Files</span><b>r</b></div>
+            <div><i>⚙</i><span>Config</span><b>c</b></div>
+            <div><i>↻</i><span>Restore Session</span><b>s</b></div>
+            <div><i>⬡</i><span>Lazy Extras</span><b>x</b></div>
+            <div><i>💤</i><span>Lazy</span><b>l</b></div>
+            <div><i>⏻</i><span>Quit</span><b>q</b></div>
+          </div>
+          <div class="dash-foot" id="ln-foot"><i>⚡</i> Neovim loaded <b>32/32</b> plugins in <b>37.45ms</b></div>
+        </div>
+        <div class="lazyui" id="ln-lazy">
+          <div class="lz-head"><span class="lz-brand">lazy.nvim 💤</span><span>Install <em>(I)</em></span><span>Update <em>(U)</em></span><span>Sync <em>(S)</em></span><span>Clean <em>(X)</em></span><span>Check <em>(C)</em></span><span>Log <em>(L)</em></span><span>Profile <em>(P)</em></span></div>
+          <div class="lz-total"><b>Total:</b> <em>32 plugins</em></div>
+          <div class="lz-sec"><b>Loaded</b> <em>(16)</em></div>
+          <div class="lz-list" id="ln-lzlist"></div>
+        </div>
+        <div class="editor" id="ln-editor">
+          <div class="ed-tabs"><span>init.lua</span><span class="on">editor.lua</span><span>lazy.lua</span><span>keymaps.lua</span></div>
+          <div class="ed-main">
+            <div class="ed-tree" id="ln-tree"></div>
+            <pre class="ed-code" id="ln-code"></pre>
+          </div>
+          <div class="ed-status"><span class="mode" id="ln-mode">NORMAL</span><span class="branch"> main</span><span class="file">lua/plugins/editor.lua</span><span class="fill"></span><span class="lsp">lua_ls</span><span class="pos" id="ln-pos">12:24</span><span class="clock">🕘 21:40</span></div>
+          <div class="cmp" id="ln-cmp"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Call to action -->
+    <section class="scene" id="s-cta">
+      <div class="subtitle" id="ct-sub">for <span class="win-grad">Windows</span></div>
+      <div class="tagline" id="ct-tag"><span id="ct-less">Less setup.</span> <span id="ct-more" class="grad">More coding.</span></div>
+      <div class="pills">
+        <div class="pill gh" id="ct-gh"><span class="star">★</span><span>github.com/<b>shenchauhan/LazyVimForWindows</b></span></div>
+        <div class="pill cmd" id="ct-cmd"><span class="ps">PS&gt;</span> .\Install-LazyVim.ps1</div>
+      </div>
+    </section>
+
+    <canvas id="fx" width="1920" height="1080"></canvas>
+  </div>
+  <div id="flash"></div>
+  <div id="vignette"></div>
+  <div id="fade"></div>
+</div>
+</div>
+<script src="cues.js"></script>
+<script src="logo.js"></script>
+<script src="trailer.js"></script>
+</body>
+</html>

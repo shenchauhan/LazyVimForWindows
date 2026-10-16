@@ -1,9 +1,10 @@
 // Renders the music, sound-effect, and narration stems in headless Edge, balances them so the
 // music sits well under the voice, and masters the mix to streaming loudness.
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { launchBrowser, startServer } from './lib/browser.mjs';
+import { selectVoice } from './lib/config.mjs';
 import { run } from './lib/ffmpeg.mjs';
 import { activeRegions, regionLoudness } from './lib/loudness.mjs';
 import { BUILD } from './lib/paths.mjs';
@@ -13,7 +14,7 @@ import { writeWavFloat } from './lib/wav.mjs';
 // Loudness targets (LUFS). Music is measured only while the narrator is speaking.
 export const MIX = { voice: -16, musicUnderVoice: -15, sfx: -30, master: -14, ceiling: 0.79 };
 
-async function renderStems(timeline) {
+async function renderStems(timeline, buildDir) {
   const { server, url } = await startServer();
   const browser = await launchBrowser();
   try {
@@ -37,7 +38,7 @@ async function renderStems(timeline) {
         data.push(samples);
       }
       stems[name] = { sampleRate, channels: data };
-      writeWavFloat(join(BUILD, `${name}.wav`), data, sampleRate);
+      writeWavFloat(join(buildDir, `${name}.wav`), data, sampleRate);
     }
     return stems;
   } finally {
@@ -110,18 +111,24 @@ async function master(input, output) {
   return result;
 }
 
-export async function buildSoundtrack(timeline) {
-  mkdirSync(BUILD, { recursive: true });
-  const stems = await renderStems(timeline);
+/** Renders, balances, and masters the soundtrack into `buildDir` (one folder per narrator). */
+export async function buildSoundtrack(timeline, buildDir = join(BUILD, timeline.voice)) {
+  mkdirSync(buildDir, { recursive: true });
+  const stems = await renderStems(timeline, buildDir);
   const { mixed, gains, report, bedInGaps, sampleRate } = balance(timeline, stems);
-  const mixFile = join(BUILD, 'mix.wav');
+  const mixFile = join(buildDir, 'mix.wav');
   writeWavFloat(mixFile, mixed, sampleRate);
-  const result = await master(mixFile, join(BUILD, 'soundtrack.wav'));
+  const result = await master(mixFile, join(buildDir, 'soundtrack.wav'));
   return { gains, report, bedInGaps, result };
 }
 
+// Usage: node scripts/audio.mjs [--voice=<id>]
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const { gains, report, bedInGaps, result } = await buildSoundtrack(loadTimeline());
+  const { id, buildDir } = selectVoice();
+  const timeline = loadTimeline({ voice: id });
+  mkdirSync(buildDir, { recursive: true });
+  writeFileSync(join(buildDir, 'timeline.json'), JSON.stringify(timeline, null, 1));
+  const { gains, report, bedInGaps, result } = await buildSoundtrack(timeline, buildDir);
   const db = (g) => `${(20 * Math.log10(g)).toFixed(1)} dB`;
   console.log(`stem gains: voice ${db(gains.voice)}, music ${db(gains.music)}, sfx ${db(gains.sfx)}`);
   for (const r of report) console.log(`  ${r.id.padEnd(11)} voice ${r.voice.toFixed(1)} LUFS, bed ${r.bed.toFixed(1)} LUFS (${(r.voice - r.bed).toFixed(1)} dB under)`);

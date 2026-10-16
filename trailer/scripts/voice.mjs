@@ -1,17 +1,19 @@
 // Generates the narration with MAI-Voice-2.1-Flash, checks each take with speech-to-text,
 // tightens long pauses, and records word timings used to sync the visuals.
-// Usage: node scripts/voice.mjs [--force] [--only=id1,id2]
+// Usage: node scripts/voice.mjs [--voice=<id>] [--force] [--only=id1,id2]
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { getSpeechCredentials, synthesize, transcribe } from './lib/azure.mjs';
+import { lineForVoice, loadScript, selectVoice } from './lib/config.mjs';
 import { findUntranscribedSpeech, tightenTake, writeWav16 } from './lib/edit.mjs';
-import { BUILD, ROOT } from './lib/paths.mjs';
+import { BUILD } from './lib/paths.mjs';
 import { analyzeProsody } from './lib/prosody.mjs';
 import { readWav } from './lib/wav.mjs';
 
-const VOICE_DIR = join(ROOT, 'assets', 'voice');
-const RAW_DIR = join(BUILD, 'voice-raw');
+const script = loadScript();
+const { id: voiceId, voice, voiceDir: VOICE_DIR } = selectVoice(script);
+const RAW_DIR = join(BUILD, 'voice-raw', voiceId);
 const MANIFEST = join(VOICE_DIR, 'manifest.json');
 const MAX_TAKES = 5;
 
@@ -62,12 +64,17 @@ async function recordTake(credentials, ssml, locale) {
 }
 
 /**
- * How far a take's prosody strays from the delivery target: semitones above the pitch ceiling
- * (sounds hyped) plus distance outside the pitch-movement band (too flat, or sing-song).
+ * How far a take's prosody strays from the delivery target, in semitones: outside the pitch band
+ * (too flat-sounding below it, too hyped above it) or outside the pitch-movement band (monotone,
+ * or sing-song).
  */
-function deliveryPenalty(p, { maxPitchHz, pitchSd } = {}) {
+function deliveryPenalty(p, { pitchHz, pitchSd } = {}) {
   let penalty = 0;
-  if (maxPitchHz && p.medianHz > maxPitchHz) penalty += 12 * Math.log2(p.medianHz / maxPitchHz);
+  if (pitchHz) {
+    const [lo, hi] = pitchHz;
+    if (p.medianHz < lo) penalty += 12 * Math.log2(lo / p.medianHz);
+    if (p.medianHz > hi) penalty += 12 * Math.log2(p.medianHz / hi);
+  }
   if (pitchSd) {
     const [lo, hi] = pitchSd;
     if (p.sdSt < lo) penalty += 2 * (lo - p.sdSt);
@@ -81,17 +88,18 @@ function describeProsody(take) {
   return `${Math.round(p.medianHz)} Hz ±${p.sdSt.toFixed(1)} st`;
 }
 
-const script = JSON.parse(readFileSync(join(ROOT, 'script.json'), 'utf8'));
 mkdirSync(VOICE_DIR, { recursive: true });
 mkdirSync(RAW_DIR, { recursive: true });
 const manifest = existsSync(MANIFEST) ? JSON.parse(readFileSync(MANIFEST, 'utf8')) : {};
 let credentials;
+console.log(`Narrator: ${voiceId} (${voice.name}:${voice.model})`);
 
-for (const line of script.lines) {
-  const ssml = buildSsml(script.voice, line);
+for (const scriptLine of script.lines) {
+  const line = lineForVoice(scriptLine, voice);
+  const ssml = buildSsml(voice, line);
   const edit = { maxPause: line.maxPause ?? 0.4, keepPause: line.keepPause ?? 0.3 };
-  const wanted = line.takes ?? script.voice.takes ?? 1;
-  const delivery = { ...script.voice.delivery, ...line.delivery };
+  const wanted = line.takes;
+  const delivery = line.delivery;
   const hash = createHash('sha256').update(ssml + JSON.stringify({ wanted, delivery })).digest('hex').slice(0, 16);
   const editHash = createHash('sha256').update(JSON.stringify(edit)).digest('hex').slice(0, 8);
   const file = join(VOICE_DIR, `${line.id}.wav`);
@@ -113,7 +121,7 @@ for (const line of script.lines) {
     const clean = [];
     let best;
     for (let n = 1; n <= MAX_TAKES + wanted - 1 && clean.length < wanted; n++) {
-      const candidate = await recordTake(credentials, ssml, script.voice.locale);
+      const candidate = await recordTake(credentials, ssml, voice.locale);
       candidate.problems = reviewTake(line, candidate);
       if (!best || candidate.problems.length < best.problems.length) best = candidate;
       if (!candidate.problems.length) {
@@ -127,9 +135,14 @@ for (const line of script.lines) {
       }
     }
     if (clean.length) {
-      const mid = delivery.pitchSd ? (delivery.pitchSd[0] + delivery.pitchSd[1]) / 2 : 0;
+      // Closest to the target first; among equally good takes, prefer movement near the middle
+      // of the band, then pitch near the middle of the band, then the snappiest.
+      const mid = (band) => (band ? (band[0] + band[1]) / 2 : 0);
+      const sdMid = mid(delivery.pitchSd);
+      const hzMid = mid(delivery.pitchHz);
       clean.sort((a, b) => a.penalty - b.penalty
-        || (mid ? Math.abs(a.prosody.sdSt - mid) - Math.abs(b.prosody.sdSt - mid) : 0)
+        || (sdMid ? Math.abs(a.prosody.sdSt - sdMid) - Math.abs(b.prosody.sdSt - sdMid) : 0)
+        || (hzMid ? Math.abs(Math.log2(a.prosody.medianHz / hzMid)) - Math.abs(Math.log2(b.prosody.medianHz / hzMid)) : 0)
         || a.length - b.length);
       best = clean[0];
       if (clean.length > 1) console.log(`  ${line.id} takes: ${clean.map((c, i) => `${describeProsody(c)}${i ? '' : ' (kept)'}`).join(', ')}`);

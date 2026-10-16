@@ -55,18 +55,32 @@
     if (el.style.visibility !== v) el.style.visibility = v;
   };
 
-  /** Gentle scene transition: drifts in from the right and out to the left with a soft blur. */
+  /**
+   * Scene transition: drifts in from the right and out to the left with a soft blur. Energy
+   * makes it travel further and faster, with more motion blur.
+   */
   function drift(t, start, end, { inDur = 0.6, outDur = 0.5, dist = 110 } = {}) {
-    const pin = ease.inOutCubic(prog(t, start - 0.1, inDur));
-    const pout = ease.inOutCubic(prog(t, end - outDur * 0.8, outDur));
+    const d = dist * mix(1, 3.2);
+    const iD = inDur * mix(1, 0.55);
+    const oD = outDur * mix(1, 0.55);
+    const pi = prog(t, start - 0.1, iD);
+    const pin = lerp(ease.inOutCubic(pi), ease.outCubic(pi), EN);
+    const po = prog(t, end - oD * 0.8, oD);
+    const pout = lerp(ease.inOutCubic(po), ease.inCubic(po), EN);
     return {
-      x: (1 - pin) * dist - pout * dist,
+      x: (1 - pin) * d - pout * d,
       o: pin * (1 - pout),
-      blur: (1 - pin) * 6 + pout * 6,
+      blur: ((1 - pin) + pout) * mix(6, 18),
     };
   }
 
+  /** Entrance easing: smooth when calm, with a springy overshoot as the energy rises. */
+  const pop = (p, overshoot = 1.7) => lerp(ease.outCubic(p), ease.outBack(p, overshoot), EN);
+
   let TL;
+  // 0 = calm, 1 = full-on. Set per build in script.json and passed in through the timeline.
+  let EN = 0.5;
+  const mix = (calm, lively) => lerp(calm, lively, EN);
   let C;
   let fxc;
   let pc;
@@ -114,13 +128,13 @@
     put(els.blob1, { x: 120 + 320 * Math.sin(t * 0.17), y: -420 + 200 * Math.cos(t * 0.13), o: base * (0.85 + 0.15 * pulse), filter: hue });
     put(els.blob2, { x: 820 + 260 * Math.cos(t * 0.15), y: -120 + 200 * Math.sin(t * 0.19), o: base * (0.82 + 0.18 * pulse), filter: hue });
     put(els.blob3, { x: 260 + 420 * Math.sin(t * 0.11 + 2), y: 180 + 220 * Math.cos(t * 0.21), o: base * 0.8, filter: hue });
-    els.floor.style.opacity = (mood.floor * (0.15 + 0.05 * pulse)).toFixed(3);
-    els.floor.style.backgroundPosition = `0 ${((t * 55) % 120).toFixed(1)}px`;
+    els.floor.style.opacity = (mood.floor * (0.15 + mix(0.05, 0.2) * pulse)).toFixed(3);
+    els.floor.style.backgroundPosition = `0 ${((t * mix(55, 170)) % 120).toFixed(1)}px`;
 
     pc.clearRect(0, 0, W, H);
     // Integrate the drift speed so particles never jump when it changes.
     const E = C.E;
-    const travel = t < E.title ? 14 * t : 14 * E.title + 30 * (t - E.title);
+    const travel = t < E.title ? 14 * t : 14 * E.title + mix(30, 70) * (t - E.title);
     for (const p of particles) {
       const y = (((p.y - travel * p.z) % (H + 120)) + H + 120) % (H + 120) - 60;
       const x = p.x + Math.sin(t * 0.5 + p.phase) * 18 * p.z - 60;
@@ -148,6 +162,51 @@
     fxc.fillStyle = g;
     fxc.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
     fxc.restore();
+  }
+
+  /**
+   * A landing accent for the big moments: an expanding ring and a spray of sparks, both scaled by
+   * the energy (nothing at all when calm).
+   */
+  function burst(t, t0, cx, cy, { color = '125,207,255', radius = 640, sparks = 60, strength = 1, seed = 5 } = {}) {
+    const dt = t - t0;
+    const k = strength * clamp(EN * 2);
+    if (dt < 0 || dt > 1.4 || k <= 0) return;
+    fxc.save();
+    fxc.globalCompositeOperation = 'lighter';
+    const p = ease.outCubic(clamp(dt / 0.9));
+    const r = 50 + radius * p;
+    fxc.strokeStyle = `rgba(${color},${(0.5 * (1 - p) * k).toFixed(3)})`;
+    fxc.lineWidth = 2 + 10 * (1 - p);
+    fxc.beginPath();
+    fxc.ellipse(cx, cy, r, r * 0.5, 0, 0, Math.PI * 2);
+    fxc.stroke();
+    const rand = mulberry32(seed);
+    const n = Math.round(sparks * EN);
+    for (let i = 0; i < n; i++) {
+      const a = rand() * Math.PI * 2;
+      const speed = 380 + rand() * 720;
+      const life = 0.55 + rand() * 0.6;
+      const size = 1.5 + rand() * 2.5;
+      const q = dt / life;
+      if (q >= 1) continue;
+      const d = speed * life * (1 - (1 - q) ** 2) * 0.5;
+      fxc.fillStyle = `rgba(${color},${((1 - q) * 0.85 * k).toFixed(3)})`;
+      fxc.beginPath();
+      fxc.arc(cx + Math.cos(a) * d * 1.3, cy + Math.sin(a) * d * 0.65 + 90 * q * q, size * (1 - q * 0.6), 0, Math.PI * 2);
+      fxc.fill();
+    }
+    fxc.restore();
+  }
+
+  /** How strongly the most recent landing (title, reveal, final chord) is still ringing at t. */
+  function landing(t, decay) {
+    const E = C.E;
+    let v = 0;
+    for (const [t0, k] of [[E.title, 1], [E.reveal, 1], [E.finalChord, 0.6]]) {
+      if (t >= t0) v = Math.max(v, k * Math.exp(-(t - t0) * decay));
+    }
+    return v;
   }
 
   // ---------------------------------------------------------------- 1. struggle
@@ -260,26 +319,27 @@
 
   function renderHook(t) {
     const c = C.hook;
-    // "There's an easier way." fades up softly, then gives way to the wordmark.
-    const inP = ease.outCubic(prog(t, c.lineIn, 0.8));
+    // "Not anymore." pops up, then gives way to the wordmark.
+    const pp = prog(t, c.lineIn, mix(0.8, 0.45));
+    const inP = ease.outCubic(pp);
     const outP = ease.inOutCubic(prog(t, c.lineOut, 0.5));
     put(els.hkNot, {
       y: (1 - inP) * 24 - outP * 16,
-      s: 1 + outP * 0.03,
+      s: lerp(mix(1, 1.3), 1, pop(pp, 1.6)) * (1 + outP * mix(0.03, 0.12)),
       o: inP * (1 - outP),
-      blur: (1 - inP) * 8 + outP * 6,
+      blur: (1 - inP) * 8 + outP * mix(6, 14),
     });
 
-    // The wordmark's blocks rise into place as the narrator says "LazyVim".
+    // The wordmark's blocks rise and tumble into place as the narrator says "LazyVim".
     if (t >= c.gather - 0.05 && t < c.out + 0.6) {
       const box = logoBox(LOGO.cw, LOGO.ch, 430);
       const exit = ease.inOutCubic(prog(t, c.out - 0.45, 0.55));
       const pulse = beatPulse(t);
       const assemble = prog(t, c.gather, c.assembled - c.gather);
       const float = Math.sin((t - c.title) * 1.2) * 4;
-      const scale = (1 + 0.008 * pulse) * (1 - exit * 0.05);
+      const scale = (1 + mix(0.008, 0.03) * pulse + mix(0, 0.08) * landing(t, 7)) * (1 - exit * 0.05);
       fxc.save();
-      fxc.translate(W / 2 - exit * 110, box.y + box.h / 2 + float);
+      fxc.translate(W / 2 - exit * mix(110, 300), box.y + box.h / 2 + float);
       fxc.scale(scale, scale);
       fxc.translate(-W / 2, -(box.y + box.h / 2));
       logo.draw(fxc, {
@@ -287,16 +347,17 @@
         assemble,
         ease: ease.outCubic,
         from: 'below',
-        spread: 70,
-        turbulence: 0.05,
+        spread: mix(70, 600),
+        turbulence: mix(0.05, 0.45),
         shadow: prog(t, c.title, 0.9),
-        glow: t >= c.title ? 0.22 + 0.12 * pulse + 0.2 * (1 - prog(t, c.title, 1.4)) : 0.1 * assemble,
+        glow: t >= c.title ? 0.22 + mix(0.12, 0.3) * pulse + 0.2 * (1 - prog(t, c.title, 1.4)) : 0.1 * assemble,
         alpha: 1 - exit,
-        blur: exit * 6,
+        blur: exit * mix(6, 14),
       });
       logo.drawZzz(fxc, { x: box.x + box.w + 18, y: box.y + 40, size: 34, t: t - c.zzz, alpha: (t >= c.zzz ? 1 : 0) * (1 - exit) });
       fxc.restore();
       bloom(t, c.title, W / 2, box.y + box.h / 2, { peak: 0.22 });
+      burst(t, c.title, W / 2, box.y + box.h / 2, { seed: 3 });
     }
     const sp = prog(t, c.subtitle, 0.7);
     const exit = drift(t, -10, c.out);
@@ -422,14 +483,15 @@
     const exit = drift(t, -10, S.end, { dist: -120 });
     const kin = [[els.cmK1, c.k1, c.k2], [els.cmK2, c.k2, c.k3], [els.cmK3, c.k3, Infinity]];
     for (const [el, t0, next] of kin) {
-      const p = ease.outCubic(prog(t, t0, 0.55));
+      const pp = prog(t, t0, mix(0.55, 0.35));
+      const p = ease.outCubic(pp);
       const dim = t >= next ? 0.45 : 1;
       put(el, {
-        x: exit.x * -1,
-        y: (1 - p) * 36,
-        s: lerp(0.97, 1, p),
+        x: exit.x * -1 + (1 - p) * mix(0, -120),
+        y: (1 - p) * mix(36, 60),
+        s: lerp(mix(0.97, 0.75), 1, pop(pp)),
         o: p * dim * exit.o,
-        blur: exit.blur + (1 - p) * 4,
+        blur: exit.blur + (1 - p) * mix(4, 10),
       });
     }
     const kp = prog(t, c.enter - 0.45, 0.4);
@@ -452,8 +514,8 @@
     const c = C.winget;
     const S = C.S.winget;
     const exit = drift(t, -10, S.end, { dist: 130 });
-    const bp = ease.outCubic(prog(t, c.badge, 0.6));
-    put(els.wgBadge, { s: lerp(0.94, 1, bp), y: (1 - bp) * 16, o: bp * exit.o, x: -exit.x, blur: exit.blur });
+    const bp = prog(t, c.badge, 0.6);
+    put(els.wgBadge, { s: lerp(mix(0.94, 0.8), 1, pop(bp)), y: (1 - ease.outCubic(bp)) * 16, o: ease.outCubic(bp) * exit.o, x: -exit.x, blur: exit.blur });
     els.wgChips.forEach((chip, i) => {
       const k = chip.dataset.k;
       const t0 = c.chips[k];
@@ -463,9 +525,9 @@
       const glow = prog(t, c.allDone + i * 0.09, 0.4) * (1 - prog(t, c.done + 0.4, 1));
       put(chip, {
         x: x - exit.x,
-        y: y + (1 - ease.outCubic(p)) * 24 + bob,
-        s: lerp(0.88, 1, ease.outBack(p, 1.2)) * (1 + 0.02 * glow),
-        r: (1 - p) * -3,
+        y: y + (1 - ease.outCubic(p)) * mix(24, 70) + bob,
+        s: lerp(mix(0.88, 0.65), 1, ease.outBack(p, mix(1.2, 2.2))) * (1 + mix(0.02, 0.05) * glow),
+        r: (1 - p) * mix(-3, -10),
         o: clamp(p * 2.5) * exit.o,
         blur: exit.blur,
       });
@@ -482,13 +544,14 @@
     put(els.arKicker, { o: prog(t, S.start + 0.05, 0.6) * exit.o, x: exit.x, y: (1 - ease.outCubic(prog(t, S.start, 0.7))) * -20, blur: exit.blur });
     const detected = t >= c.detected;
     els.arCards.forEach((card, i) => {
-      const p = ease.outCubic(prog(t, c.cards[i] - 0.05, 0.65));
+      const pp = prog(t, c.cards[i] - 0.05, 0.65);
+      const p = ease.outCubic(pp);
       const isPick = i === 2;
       const dp = ease.inOutCubic(prog(t, c.detected, 0.6));
-      const s = isPick ? 1 + 0.04 * dp : 1 - 0.04 * dp;
+      const s = (isPick ? 1 + mix(0.04, 0.08) * pop(prog(t, c.detected, 0.5)) : 1 - 0.04 * dp) * lerp(mix(1, 0.85), 1, pop(pp, 1.4));
       put(card, {
-        ry: (1 - p) * 30,
-        y: (1 - p) * 40,
+        ry: (1 - p) * mix(30, 80),
+        y: (1 - p) * mix(40, 90),
         s,
         x: exit.x,
         o: p * exit.o * (detected && !isPick ? lerp(1, 0.45, dp) : 1),
@@ -602,12 +665,12 @@
       put(frame, { o: 0 });
       return;
     }
-    const bp = ease.inOutCubic(prog(t, c.reveal - 0.15, 0.9));
+    const bp = ease.inOutCubic(prog(t, c.reveal - 0.15, mix(0.9, 0.5)));
     const ready = ease.inOutCubic(prog(t, c.ready - 0.05, 1.1));
     const exitP = ease.inOutCubic(prog(t, S.end - 0.5, 0.6));
     const pulse = beatPulse(t);
     put(frame, {
-      s: lerp(1.04, 1, bp) * lerp(1, 0.74, ready) * lerp(1, 0.86, exitP) * (1 + 0.003 * pulse),
+      s: lerp(mix(1.04, 1.18), 1, bp) * lerp(1, 0.74, ready) * lerp(1, 0.86, exitP) * (1 + mix(0.003, 0.008) * pulse),
       ry: ready * -9 - exitP * 8,
       rx: ready * 5,
       y: ready * -10 - exitP * 50,
@@ -618,6 +681,7 @@
     frame.style.borderRadius = `${(ready * 22).toFixed(1)}px`;
     frame.style.overflow = 'hidden';
     frame.style.boxShadow = ready > 0 ? `0 ${(60 * ready).toFixed(0)}px 140px rgba(0,0,0,${(0.6 * ready).toFixed(2)}), 0 0 0 ${(2 * ready).toFixed(1)}px rgba(122,162,247,.35)` : '';
+    burst(t, c.reveal, W / 2, 330, { seed: 8, radius: 760 });
 
     // Dashboard
     const lazyP = ease.inOutCubic(prog(t, c.lazy, 0.55));
@@ -696,7 +760,7 @@
       const ch = 48;
       const box = logoBox(cw, ch, 330);
       const assemble = prog(t, c.logo - 0.2, c.logoLand - c.logo + 0.6);
-      const s = 1 + 0.006 * pulse + 0.012 * swell;
+      const s = 1 + mix(0.006, 0.02) * pulse + 0.012 * swell + mix(0, 0.05) * landing(t, 6) * (t >= c.finalChord ? 1 : 0);
       fxc.save();
       fxc.translate(W / 2, box.y + box.h / 2);
       fxc.scale(s, s);
@@ -706,25 +770,29 @@
         assemble,
         ease: ease.outCubic,
         from: 'below',
-        spread: 70,
-        turbulence: 0.05,
+        spread: mix(70, 600),
+        turbulence: mix(0.05, 0.45),
         shadow: prog(t, c.logoLand, 0.9),
-        glow: 0.22 + 0.12 * pulse + 0.25 * swell,
+        glow: 0.22 + mix(0.12, 0.3) * pulse + 0.25 * swell,
       });
       logo.drawZzz(fxc, { x: box.x + box.w + 16, y: box.y + 36, size: 32, t: t - c.subtitle });
       fxc.restore();
       bloom(t, c.finalChord, W / 2, box.y + box.h / 2, { color: '158,206,106', peak: 0.18, dur: 2.6, radius: 900 });
+      burst(t, c.finalChord, W / 2, box.y + box.h / 2, { color: '158,206,106', seed: 12, strength: 0.7, sparks: 44 });
     }
 
     const rise = (t0, dist = 30) => {
-      const p = ease.outCubic(prog(t, t0, 0.7));
-      return { y: (1 - p) * dist, o: p, blur: (1 - p) * 5 };
+      const pp = prog(t, t0, mix(0.7, 0.45));
+      const p = ease.outCubic(pp);
+      return { y: (1 - p) * dist * mix(1, 2), s: lerp(mix(1, 0.85), 1, pop(pp, 1.5)), o: p, blur: (1 - p) * 5 };
     };
     put(els.ctSub, rise(c.subtitle, 30));
     put(els.ctLess, rise(c.less, 24));
     put(els.ctMore, rise(c.more, 24));
-    put(els.ctGh, { ...rise(c.github, 24), s: 1 + 0.01 * swell });
-    put(els.ctCmd, { ...rise(c.command, 24), s: 1 + 0.01 * swell });
+    const gh = rise(c.github, 24);
+    const cmd = rise(c.command, 24);
+    put(els.ctGh, { ...gh, s: gh.s * (1 + 0.01 * swell) });
+    put(els.ctCmd, { ...cmd, s: cmd.s * (1 + 0.01 * swell) });
   }
 
   // ---------------------------------------------------------------- fades
@@ -732,6 +800,12 @@
     const fadeIn = 1 - ease.inOutCubic(prog(t, 0, 0.7));
     const fadeOut = ease.inOutCubic(prog(t, C.cta.fadeOut, C.E.end - C.cta.fadeOut));
     els.fade.style.opacity = Math.max(fadeIn, fadeOut).toFixed(3);
+    // A quick flash of light and a small camera nudge on each landing, scaled by the energy.
+    els.flash.style.opacity = (landing(t, 9) * mix(0, 0.3)).toFixed(3);
+    const shake = landing(t, 11) * mix(0, 12);
+    els.world.style.transform = shake > 0.05
+      ? `translate(${(shake * Math.sin(t * 97)).toFixed(2)}px, ${(shake * Math.cos(t * 83)).toFixed(2)}px)`
+      : '';
   }
 
   // ---------------------------------------------------------------- engine
@@ -748,8 +822,10 @@
 
   async function init(timeline) {
     TL = timeline;
+    EN = clamp(TL.energy ?? 0.5);
     C = window.buildCues(TL);
     const ids = {
+      world: 'world', flash: 'flash',
       blob1: 'blob1', blob2: 'blob2', blob3: 'blob3', floor: 'floor', fade: 'fade',
       sStruggle: 's-struggle', stTerm: 'st-term', stBody: 'st-body', stCompiler: 'st-compiler', stPath: 'st-path',
       stBrowser: 'st-browser', stTabs: 'st-tabs', stCount: 'st-count', stCal: 'st-cal', stSat: 'st-sat', stSun: 'st-sun',
@@ -812,10 +888,13 @@
     addEventListener('resize', fit);
     fit();
     (async () => {
-      const tl = await (await fetch('../build/timeline.json', { cache: 'no-store' })).json();
+      // ?voice=<id> picks the narrator; the default is the first voice in script.json.
+      const voice = params.get('voice')
+        ?? Object.keys((await (await fetch('../script.json', { cache: 'no-store' })).json()).voices)[0];
+      const tl = await (await fetch(`../build/${encodeURIComponent(voice)}/timeline.json`, { cache: 'no-store' })).json();
       await document.fonts.ready;
       await init(tl);
-      const audio = new Audio('../build/soundtrack.wav');
+      const audio = new Audio(`../build/${encodeURIComponent(voice)}/soundtrack.wav`);
       const start = Number(params.get('t') ?? 0);
       let playing = false;
       const loop = () => {

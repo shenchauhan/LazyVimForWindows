@@ -14,7 +14,7 @@ function frameDb(samples, sampleRate) {
 }
 
 /** Returns loud regions (seconds) that no recognized word covers, e.g. stutters the recognizer dropped. */
-export function findUntranscribedSpeech(samples, sampleRate, words, { thresholdDb = -32, minLength = 0.2, slack = 0.15 } = {}) {
+export function findUntranscribedSpeech(samples, sampleRate, words, { thresholdDb = -32, minLength = 0.12, slack = 0.15 } = {}) {
   const db = frameDb(samples, sampleRate);
   const covered = (t) => words.some((w) => t >= w.start - slack && t <= w.end + slack);
   const regions = [];

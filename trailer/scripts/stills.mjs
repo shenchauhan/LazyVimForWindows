@@ -1,17 +1,18 @@
 // Renders still frames for reviewing the design without encoding a video.
-// Usage: node scripts/stills.mjs 1.5 12.4 30 [--out=build/stills]
+// Usage: node scripts/stills.mjs 1.5 12.4 30 [--voice=<id>] [--out=build/<voice>/stills]
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { launchBrowser, openTrailerPage, startServer } from './lib/browser.mjs';
-import { BUILD } from './lib/paths.mjs';
+import { selectVoice } from './lib/config.mjs';
 import { loadTimeline } from './lib/timeline.mjs';
 
 const args = process.argv.slice(2);
-const out = args.find((a) => a.startsWith('--out='))?.slice(6) ?? join(BUILD, 'stills');
+const { id, buildDir } = selectVoice();
+const out = args.find((a) => a.startsWith('--out='))?.slice(6) ?? join(buildDir, 'stills');
 const times = args.filter((a) => !a.startsWith('--')).map(Number);
 mkdirSync(out, { recursive: true });
 
-const timeline = loadTimeline();
+const timeline = loadTimeline({ voice: id });
 const { server, url } = await startServer();
 const browser = await launchBrowser();
 try {

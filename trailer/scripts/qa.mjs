@@ -1,14 +1,16 @@
 // Quality checks for a finished build: narration intelligibility over the music (Azure speech to
-// text on the final mix), loudness, and output format.
-// Usage: node scripts/qa.mjs [path/to/trailer.mp4]
-import { readFileSync } from 'node:fs';
+// text on the final mix, in the narrator's locale), loudness, and output format.
+// Usage: node scripts/qa.mjs [--voice=<id>] [path/to/trailer.mp4]
+import { mkdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { getSpeechCredentials, transcribe } from './lib/azure.mjs';
+import { loadScript, selectVoice } from './lib/config.mjs';
 import { run } from './lib/ffmpeg.mjs';
-import { BUILD, ROOT } from './lib/paths.mjs';
+import { ROOT } from './lib/paths.mjs';
 
-const video = process.argv[2] ?? join(ROOT, 'dist', 'LazyVim-for-Windows-trailer.mp4');
-const script = JSON.parse(readFileSync(join(ROOT, 'script.json'), 'utf8'));
+const script = loadScript();
+const { voice, buildDir, videoName } = selectVoice(script);
+const video = process.argv.slice(2).find((a) => !a.startsWith('--')) ?? join(ROOT, 'dist', videoName);
 const words = (s) => s.toLowerCase().replace(/[^a-z0-9\s-]/g, ' ').replace(/-/g, ' ').split(/\s+/).filter(Boolean);
 const joined = (s) => words(s).join('');
 
@@ -30,13 +32,14 @@ const streams = info.split('\n').filter((l) => /Duration|Stream #/.test(l)).map(
 console.log(`Output: ${video}`);
 streams.forEach((s) => console.log(`  ${s}`));
 
-const wav = join(BUILD, 'qa-mix.wav');
+mkdirSync(buildDir, { recursive: true });
+const wav = join(buildDir, 'qa-mix.wav');
 await run(['-i', video, '-vn', '-ac', '1', '-ar', '16000', '-c:a', 'pcm_s16le', wav]);
 const log = await run(['-i', video, '-vn', '-af', 'loudnorm=print_format=json', '-f', 'null', '-']);
 const m = JSON.parse(log.slice(log.lastIndexOf('{'), log.lastIndexOf('}') + 1));
 console.log(`Loudness: ${m.input_i} LUFS integrated, ${m.input_tp} dBTP true peak, ${m.input_lra} LU range`);
 
-const result = await transcribe(getSpeechCredentials(), readFileSync(wav));
+const result = await transcribe(getSpeechCredentials(), readFileSync(wav), voice.locale);
 const reference = script.lines.map((l) => l.text).join(' ');
 console.log(`Narration heard over the music:\n  "${result.text}"`);
 console.log(`Character error rate vs script: ${(cer(reference, result.text) * 100).toFixed(1)}%`);

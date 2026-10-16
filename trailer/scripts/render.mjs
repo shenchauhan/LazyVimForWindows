@@ -8,7 +8,7 @@ import { launchBrowser, openTrailerPage, startServer } from './lib/browser.mjs';
 import { ffmpeg, run } from './lib/ffmpeg.mjs';
 import { BUILD } from './lib/paths.mjs';
 
-export async function renderVideo(timeline, { fps = 60, scale = 1, workers = 8, crf = 18, preset = 'slow', out = join(BUILD, 'video.mp4') } = {}) {
+export async function renderVideo(timeline, { fps = 60, scale = 1, workers = 8, crf = 18, preset = 'slow', dir = join(BUILD, timeline.voice), out = join(dir, 'video.mp4') } = {}) {
   const total = Math.ceil(timeline.duration * fps);
   const per = Math.ceil(total / workers);
   const { server, url } = await startServer();
@@ -27,7 +27,7 @@ export async function renderVideo(timeline, { fps = 60, scale = 1, workers = 8, 
       const from = w * per;
       const to = Math.min(total, from + per);
       if (from >= to) return;
-      const file = join(BUILD, `segment-${w}.mp4`);
+      const file = join(dir, `segment-${w}.mp4`);
       segments[w] = file;
       const browser = await launchBrowser();
       browsers.push(browser);
@@ -47,7 +47,7 @@ export async function renderVideo(timeline, { fps = 60, scale = 1, workers = 8, 
       await enc.done;
       await page.close();
     }));
-    const list = join(BUILD, 'segments.txt');
+    const list = join(dir, 'segments.txt');
     writeFileSync(list, segments.filter(Boolean).map((s) => `file '${s.replace(/\\/g, '/')}'`).join('\n'));
     await run(['-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', out]);
   } finally {

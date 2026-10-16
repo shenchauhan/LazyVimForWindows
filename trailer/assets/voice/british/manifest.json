@@ -1,0 +1,746 @@
+{
+  "struggle-1": {
+    "hash": "2b4a2ce92d3b9614",
+    "editHash": "e1a908bf",
+    "file": "struggle-1.wav",
+    "duration": 1.84,
+    "rawDuration": 2.02,
+    "transcript": "Setting up Neovim on windows?",
+    "prosody": {
+      "medianHz": 124.5,
+      "sdSt": 3.7,
+      "rangeSt": 9.99,
+      "voiced": 0.51,
+      "effortDb": -7.9,
+      "wordsPerSecond": 2.89
+    },
+    "words": [
+      {
+        "text": "Setting",
+        "start": 0.11,
+        "end": 0.47
+      },
+      {
+        "text": "up",
+        "start": 0.47,
+        "end": 0.59
+      },
+      {
+        "text": "Neovim",
+        "start": 0.59,
+        "end": 1.07
+      },
+      {
+        "text": "on",
+        "start": 1.07,
+        "end": 1.15
+      },
+      {
+        "text": "windows?",
+        "start": 1.15,
+        "end": 1.84
+      }
+    ]
+  },
+  "struggle-2": {
+    "hash": "58444d9bc45c3691",
+    "editHash": "e1a908bf",
+    "file": "struggle-2.wav",
+    "duration": 3.59,
+    "rawDuration": 3.726,
+    "transcript": "Compilers, path variables, 47 browser tabs.",
+    "prosody": {
+      "medianHz": 125,
+      "sdSt": 4.79,
+      "rangeSt": 11.02,
+      "voiced": 0.31,
+      "effortDb": -6.4,
+      "wordsPerSecond": 1.72
+    },
+    "words": [
+      {
+        "text": "Compilers,",
+        "start": 0.07,
+        "end": 0.67
+      },
+      {
+        "text": "path",
+        "start": 0.67,
+        "end": 1.07
+      },
+      {
+        "text": "variables,",
+        "start": 1.07,
+        "end": 1.71
+      },
+      {
+        "text": "47",
+        "start": 1.95,
+        "end": 2.59
+      },
+      {
+        "text": "browser",
+        "start": 2.59,
+        "end": 2.99
+      },
+      {
+        "text": "tabs.",
+        "start": 2.99,
+        "end": 3.55
+      }
+    ]
+  },
+  "struggle-3": {
+    "hash": "6f10955484d1bd43",
+    "editHash": "e1a908bf",
+    "file": "struggle-3.wav",
+    "duration": 1.44,
+    "rawDuration": 1.82,
+    "transcript": "And there goes your weekend.",
+    "prosody": {
+      "medianHz": 150,
+      "sdSt": 3.51,
+      "rangeSt": 5.75,
+      "voiced": 0.43,
+      "effortDb": -10.1,
+      "wordsPerSecond": 3.91
+    },
+    "words": [
+      {
+        "text": "And",
+        "start": 0.11,
+        "end": 0.23
+      },
+      {
+        "text": "there",
+        "start": 0.23,
+        "end": 0.43
+      },
+      {
+        "text": "goes",
+        "start": 0.43,
+        "end": 0.67
+      },
+      {
+        "text": "your",
+        "start": 0.67,
+        "end": 0.83
+      },
+      {
+        "text": "weekend.",
+        "start": 0.83,
+        "end": 1.39
+      }
+    ]
+  },
+  "hook-1": {
+    "hash": "d944080605892518",
+    "editHash": "e1a908bf",
+    "file": "hook-1.wav",
+    "duration": 1.44,
+    "rawDuration": 1.82,
+    "transcript": "But not anymore.",
+    "prosody": {
+      "medianHz": 151.4,
+      "sdSt": 3.45,
+      "rangeSt": 5.06,
+      "voiced": 0.53,
+      "effortDb": -6.6,
+      "wordsPerSecond": 2.34
+    },
+    "words": [
+      {
+        "text": "But",
+        "start": 0.11,
+        "end": 0.51
+      },
+      {
+        "text": "not",
+        "start": 0.51,
+        "end": 0.79
+      },
+      {
+        "text": "anymore.",
+        "start": 0.79,
+        "end": 1.39
+      }
+    ]
+  },
+  "hook-2": {
+    "hash": "7921a4e1ff2c6ec6",
+    "editHash": "e1a908bf",
+    "file": "hook-2.wav",
+    "duration": 2.542,
+    "rawDuration": 2.542,
+    "transcript": "Meet Lazy Vim for Windows.",
+    "prosody": {
+      "medianHz": 115.8,
+      "sdSt": 4.42,
+      "rangeSt": 11.81,
+      "voiced": 0.5,
+      "effortDb": -7.7,
+      "wordsPerSecond": 2.08
+    },
+    "words": [
+      {
+        "text": "Meet",
+        "start": 0.11,
+        "end": 0.51
+      },
+      {
+        "text": "Lazy",
+        "start": 0.51,
+        "end": 0.99
+      },
+      {
+        "text": "Vim",
+        "start": 0.99,
+        "end": 1.47
+      },
+      {
+        "text": "for",
+        "start": 1.55,
+        "end": 1.79
+      },
+      {
+        "text": "Windows.",
+        "start": 1.79,
+        "end": 2.51
+      }
+    ]
+  },
+  "command": {
+    "hash": "fc1d893e5b9f7372",
+    "editHash": "e1a908bf",
+    "file": "command.wav",
+    "duration": 3.774,
+    "rawDuration": 7.694,
+    "transcript": "One script, one command, that's it.",
+    "prosody": {
+      "medianHz": 133.6,
+      "sdSt": 5.24,
+      "rangeSt": 10.46,
+      "voiced": 0.41,
+      "effortDb": -5.7,
+      "wordsPerSecond": 1.72
+    },
+    "words": [
+      {
+        "text": "One",
+        "start": 0.27,
+        "end": 0.59
+      },
+      {
+        "text": "script,",
+        "start": 0.59,
+        "end": 1.39
+      },
+      {
+        "text": "one",
+        "start": 1.6,
+        "end": 2
+      },
+      {
+        "text": "command,",
+        "start": 2,
+        "end": 2.72
+      },
+      {
+        "text": "that's",
+        "start": 2.91,
+        "end": 3.31
+      },
+      {
+        "text": "it.",
+        "start": 3.31,
+        "end": 3.75
+      }
+    ]
+  },
+  "winget": {
+    "hash": "610dcb00b1a118e1",
+    "editHash": "e1a908bf",
+    "file": "winget.wav",
+    "duration": 8.62,
+    "rawDuration": 8.812,
+    "transcript": "Powered by Winget, it installs Neovim, Git, a C compiler, TreeSitter, and fast search tools, all on its own.",
+    "prosody": {
+      "medianHz": 141.1,
+      "sdSt": 5.54,
+      "rangeSt": 15.51,
+      "voiced": 0.33,
+      "effortDb": -6.1,
+      "wordsPerSecond": 2.23
+    },
+    "words": [
+      {
+        "text": "Powered",
+        "start": 0.07,
+        "end": 0.35
+      },
+      {
+        "text": "by",
+        "start": 0.35,
+        "end": 0.51
+      },
+      {
+        "text": "Winget,",
+        "start": 0.51,
+        "end": 1.15
+      },
+      {
+        "text": "it",
+        "start": 1.15,
+        "end": 1.31
+      },
+      {
+        "text": "installs",
+        "start": 1.31,
+        "end": 1.87
+      },
+      {
+        "text": "Neovim,",
+        "start": 1.87,
+        "end": 2.51
+      },
+      {
+        "text": "Git,",
+        "start": 2.75,
+        "end": 3.23
+      },
+      {
+        "text": "a",
+        "start": 3.55,
+        "end": 3.63
+      },
+      {
+        "text": "C",
+        "start": 3.63,
+        "end": 4.03
+      },
+      {
+        "text": "compiler,",
+        "start": 4.03,
+        "end": 4.75
+      },
+      {
+        "text": "TreeSitter,",
+        "start": 4.99,
+        "end": 5.71
+      },
+      {
+        "text": "and",
+        "start": 5.87,
+        "end": 6.11
+      },
+      {
+        "text": "fast",
+        "start": 6.11,
+        "end": 6.59
+      },
+      {
+        "text": "search",
+        "start": 6.59,
+        "end": 6.99
+      },
+      {
+        "text": "tools,",
+        "start": 6.99,
+        "end": 7.47
+      },
+      {
+        "text": "all",
+        "start": 7.79,
+        "end": 7.95
+      },
+      {
+        "text": "on",
+        "start": 7.95,
+        "end": 8.07
+      },
+      {
+        "text": "its",
+        "start": 8.07,
+        "end": 8.27
+      },
+      {
+        "text": "own.",
+        "start": 8.27,
+        "end": 8.59
+      }
+    ]
+  },
+  "arch": {
+    "hash": "54080bbee7646123",
+    "editHash": "e1a908bf",
+    "file": "arch.wav",
+    "duration": 7.44,
+    "rawDuration": 8.715,
+    "transcript": "x64, x86 or ARM64. It detects your machine and picks the right compiler.",
+    "prosody": {
+      "medianHz": 142.3,
+      "sdSt": 5.69,
+      "rangeSt": 15.95,
+      "voiced": 0.3,
+      "effortDb": -6.3,
+      "wordsPerSecond": 1.77
+    },
+    "words": [
+      {
+        "text": "x64,",
+        "start": 0.11,
+        "end": 0.99
+      },
+      {
+        "text": "x86",
+        "start": 1.15,
+        "end": 2.67
+      },
+      {
+        "text": "or",
+        "start": 2.67,
+        "end": 2.99
+      },
+      {
+        "text": "ARM64.",
+        "start": 3.07,
+        "end": 4.35
+      },
+      {
+        "text": "It",
+        "start": 4.49,
+        "end": 4.69
+      },
+      {
+        "text": "detects",
+        "start": 4.69,
+        "end": 5.13
+      },
+      {
+        "text": "your",
+        "start": 5.13,
+        "end": 5.33
+      },
+      {
+        "text": "machine",
+        "start": 5.33,
+        "end": 5.85
+      },
+      {
+        "text": "and",
+        "start": 5.89,
+        "end": 6.09
+      },
+      {
+        "text": "picks",
+        "start": 6.09,
+        "end": 6.33
+      },
+      {
+        "text": "the",
+        "start": 6.33,
+        "end": 6.49
+      },
+      {
+        "text": "right",
+        "start": 6.49,
+        "end": 6.81
+      },
+      {
+        "text": "compiler.",
+        "start": 6.81,
+        "end": 7.44
+      }
+    ]
+  },
+  "safe": {
+    "hash": "9b7a5374d995e03b",
+    "editHash": "e1a908bf",
+    "file": "safe.wav",
+    "duration": 5.11,
+    "rawDuration": 5.574,
+    "transcript": "Already have a config? Relax, it's backed up first safe by default.",
+    "prosody": {
+      "medianHz": 138.9,
+      "sdSt": 4.08,
+      "rangeSt": 11.68,
+      "voiced": 0.27,
+      "effortDb": -6.7,
+      "wordsPerSecond": 2.41
+    },
+    "words": [
+      {
+        "text": "Already",
+        "start": 0.11,
+        "end": 0.43
+      },
+      {
+        "text": "have",
+        "start": 0.43,
+        "end": 0.59
+      },
+      {
+        "text": "a",
+        "start": 0.59,
+        "end": 0.67
+      },
+      {
+        "text": "config?",
+        "start": 0.67,
+        "end": 1.23
+      },
+      {
+        "text": "Relax,",
+        "start": 1.46,
+        "end": 2.18
+      },
+      {
+        "text": "it's",
+        "start": 2.18,
+        "end": 2.42
+      },
+      {
+        "text": "backed",
+        "start": 2.42,
+        "end": 2.74
+      },
+      {
+        "text": "up",
+        "start": 2.74,
+        "end": 2.9
+      },
+      {
+        "text": "first",
+        "start": 2.9,
+        "end": 3.46
+      },
+      {
+        "text": "safe",
+        "start": 3.65,
+        "end": 4.13
+      },
+      {
+        "text": "by",
+        "start": 4.13,
+        "end": 4.37
+      },
+      {
+        "text": "default.",
+        "start": 4.37,
+        "end": 5.09
+      }
+    ]
+  },
+  "launch-1": {
+    "hash": "e02d4a96f07f5dd0",
+    "editHash": "e1a908bf",
+    "file": "launch-1.wav",
+    "duration": 1.89,
+    "rawDuration": 2.052,
+    "transcript": "Then fire up Neovim.",
+    "prosody": {
+      "medianHz": 118.8,
+      "sdSt": 3.83,
+      "rangeSt": 9.33,
+      "voiced": 0.61,
+      "effortDb": -8.2,
+      "wordsPerSecond": 2.27
+    },
+    "words": [
+      {
+        "text": "Then",
+        "start": 0.11,
+        "end": 0.43
+      },
+      {
+        "text": "fire",
+        "start": 0.43,
+        "end": 0.91
+      },
+      {
+        "text": "up",
+        "start": 0.91,
+        "end": 1.07
+      },
+      {
+        "text": "Neovim.",
+        "start": 1.07,
+        "end": 1.87
+      }
+    ]
+  },
+  "launch-2": {
+    "hash": "41b6e591e7e0bfd2",
+    "editHash": "e1a908bf",
+    "file": "launch-2.wav",
+    "duration": 1.26,
+    "rawDuration": 1.82,
+    "transcript": "And there it is.",
+    "prosody": {
+      "medianHz": 143.2,
+      "sdSt": 3.89,
+      "rangeSt": 10.36,
+      "voiced": 0.54,
+      "effortDb": -7.2,
+      "wordsPerSecond": 3.57
+    },
+    "words": [
+      {
+        "text": "And",
+        "start": 0.11,
+        "end": 0.27
+      },
+      {
+        "text": "there",
+        "start": 0.27,
+        "end": 0.59
+      },
+      {
+        "text": "it",
+        "start": 0.59,
+        "end": 0.75
+      },
+      {
+        "text": "is.",
+        "start": 0.75,
+        "end": 1.23
+      }
+    ]
+  },
+  "launch-3": {
+    "hash": "7c4eebb084356cf0",
+    "editHash": "e1a908bf",
+    "file": "launch-3.wav",
+    "duration": 4.42,
+    "rawDuration": 4.43,
+    "transcript": "A gorgeous Batteries Included editor, ready to roll.",
+    "prosody": {
+      "medianHz": 128.6,
+      "sdSt": 5.03,
+      "rangeSt": 12.41,
+      "voiced": 0.42,
+      "effortDb": -6.5,
+      "wordsPerSecond": 1.89
+    },
+    "words": [
+      {
+        "text": "A",
+        "start": 0.19,
+        "end": 0.23
+      },
+      {
+        "text": "gorgeous",
+        "start": 0.23,
+        "end": 0.91
+      },
+      {
+        "text": "Batteries",
+        "start": 0.91,
+        "end": 1.63
+      },
+      {
+        "text": "Included",
+        "start": 1.63,
+        "end": 2.27
+      },
+      {
+        "text": "editor,",
+        "start": 2.35,
+        "end": 2.91
+      },
+      {
+        "text": "ready",
+        "start": 3.31,
+        "end": 3.63
+      },
+      {
+        "text": "to",
+        "start": 3.63,
+        "end": 3.79
+      },
+      {
+        "text": "roll.",
+        "start": 3.79,
+        "end": 4.42
+      }
+    ]
+  },
+  "cta": {
+    "hash": "57780ee745b01e32",
+    "editHash": "e1a908bf",
+    "file": "cta.wav",
+    "duration": 5.27,
+    "rawDuration": 7.52,
+    "transcript": "Lazy Vim for Windows, less setup, more coding. Grab it on GitHub.",
+    "prosody": {
+      "medianHz": 124.6,
+      "sdSt": 5.24,
+      "rangeSt": 15.91,
+      "voiced": 0.32,
+      "effortDb": -6.2,
+      "wordsPerSecond": 2.38
+    },
+    "words": [
+      {
+        "text": "Lazy",
+        "start": 0.11,
+        "end": 0.43
+      },
+      {
+        "text": "Vim",
+        "start": 0.43,
+        "end": 0.67
+      },
+      {
+        "text": "for",
+        "start": 0.67,
+        "end": 0.83
+      },
+      {
+        "text": "Windows,",
+        "start": 0.83,
+        "end": 1.47
+      },
+      {
+        "text": "less",
+        "start": 1.67,
+        "end": 2.03
+      },
+      {
+        "text": "setup,",
+        "start": 2.03,
+        "end": 2.47
+      },
+      {
+        "text": "more",
+        "start": 2.63,
+        "end": 2.87
+      },
+      {
+        "text": "coding.",
+        "start": 2.87,
+        "end": 3.43
+      },
+      {
+        "text": "Grab",
+        "start": 3.64,
+        "end": 3.96
+      },
+      {
+        "text": "it",
+        "start": 3.96,
+        "end": 4.2
+      },
+      {
+        "text": "on",
+        "start": 4.2,
+        "end": 4.6
+      },
+      {
+        "text": "GitHub.",
+        "start": 4.6,
+        "end": 5.16
+      }
+    ]
+  }
+}

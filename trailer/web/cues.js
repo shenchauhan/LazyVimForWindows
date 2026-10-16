@@ -88,13 +88,14 @@
       ['git', word('winget', 'git')],
       ['compiler', word('winget', 'c')],
       ['treesitter', word('winget', 'tree')],
-      ['fd', word('winget', 'search')],
-      ['fzf', word('winget', 'tools')],
-      ['ripgrep', word('winget', 'relies')],
+      ['fd', word('winget', 'fast')],
+      ['fzf', word('winget', 'search')],
+      ['ripgrep', word('winget', 'tools')],
     ];
-    const allDone = lastWordEnd('winget') + 0.1;
+    // Every chip gets its check mark on "all on its own".
+    const allDone = word('winget', 'all');
     c.winget = {
-      badge: word('winget', 'uses') - 0.1,
+      badge: word('winget', 'powered') - 0.1,
       chips: Object.fromEntries(chipWords),
       allDone,
       done: allDone + 0.5,
@@ -141,72 +142,80 @@
       subtitle: word('cta', 'for') - 0.05,
       less: word('cta', 'less') - 0.04,
       more: word('cta', 'more') - 0.04,
-      github: word('cta', 'you') - 0.05,
+      github: word('cta', 'grab') - 0.05,
       command: word('cta', 'github') + 0.35,
       finalChord: E.finalChord,
       fadeOut: E.end - 1.2,
     };
 
-    // Music arrangement shared with the score; `energy` scales the gentle beat-reactive motion.
+    // Music arrangement shared with the score; `energy` scales the beat-reactive motion.
     c.sections = [
-      { id: 'intro', from: 0, to: E.introEnd, kick: false, energy: 0 },
+      { id: 'intro', from: 0, to: E.introEnd, kick: true, energy: 0.2 },
       { id: 'gap', from: E.introEnd, to: E.title, kick: false, energy: 0 },
-      { id: 'main', from: E.title, to: S.safe.start, kick: true, energy: 0.35 },
+      { id: 'main', from: E.title, to: S.safe.start, kick: true, energy: 0.6 },
       { id: 'breakdown', from: S.safe.start, to: S.launch.start, kick: false, energy: 0 },
-      { id: 'build', from: S.launch.start, to: E.reveal, kick: true, energy: 0.2 },
-      { id: 'main2', from: E.reveal, to: E.finalChord, kick: true, energy: 0.45 },
+      { id: 'build', from: S.launch.start, to: E.reveal, kick: true, energy: 0.3 },
+      { id: 'main2', from: E.reveal, to: E.finalChord, kick: true, energy: 0.7 },
       { id: 'end', from: E.finalChord, to: E.end + 2, kick: false, energy: 0 },
     ];
     c.section = (t) => c.sections.find((s) => t >= s.from && t < s.to) ?? c.sections.at(-1);
     c.gridOrigin = (t) => tl.grids.filter((g) => g.from <= t + 1e-6).at(-1).origin;
 
-    // Sound effects, all derived from the cues above and kept deliberately soft.
+    // Sound effects, all derived from the cues above: present, but never louder than the story.
     const sfx = [];
     const add = (t, type, gain = 1, pan = 0) => sfx.push({ t, type, gain, pan });
     c.struggle.keys.forEach((t, i) => add(t, 'key', 0.6, -0.1 + i * 0.05));
     add(c.struggle.enter, 'enter', 0.7);
-    add(c.struggle.error, 'error', 0.45);
-    add(c.struggle.compiler, 'error', 0.4, 0.3);
-    add(c.struggle.path, 'error', 0.4, -0.3);
-    add(c.struggle.browserIn, 'whoosh', 0.25, 0.2);
-    for (let i = 0; i < 10; i++) add(c.struggle.tabsFrom + i * ((c.struggle.tabs47 - c.struggle.tabsFrom) / 10), 'tick', 0.3, 0.4 - i * 0.07);
-    add(c.struggle.tabs47, 'pop', 0.5, 0.2);
-    add(c.struggle.calendarIn, 'whoosh', 0.2, -0.2);
-    add(c.struggle.sat, 'flip', 0.45, -0.2);
-    add(c.struggle.sun, 'flip', 0.45, 0.2);
+    add(c.struggle.error, 'error', 0.5);
+    add(c.struggle.compiler, 'error', 0.45, 0.3);
+    add(c.struggle.path, 'error', 0.45, -0.3);
+    add(c.struggle.browserIn, 'whoosh', 0.35, 0.2);
+    for (let i = 0; i < 10; i++) add(c.struggle.tabsFrom + i * ((c.struggle.tabs47 - c.struggle.tabsFrom) / 10), 'tick', 0.35, 0.4 - i * 0.07);
+    add(c.struggle.tabs47, 'pop', 0.6, 0.2);
+    add(c.struggle.calendarIn, 'whoosh', 0.3, -0.2);
+    add(c.struggle.sat, 'flip', 0.5, -0.2);
+    add(c.struggle.sun, 'flip', 0.5, 0.2);
 
-    add(c.hook.lineIn + 0.1, 'shimmer', 0.3);
+    add(c.hook.lineIn, 'pop', 0.4);
+    add(c.hook.title + 0.05, 'shimmer', 0.35);
 
-    add(c.command.termIn, 'whoosh', 0.25);
+    add(c.command.termIn, 'whoosh', 0.35);
+    [c.command.k1, c.command.k2, c.command.k3].forEach((t, i) => add(t + 0.04, 'pop', 0.3 + i * 0.08, -0.2 + i * 0.2));
     c.command.keys.forEach((t, i) => add(t, 'key', 0.25, 0.15 + (i % 5) * 0.02));
-    add(c.command.enter, 'enter', 0.6);
-    add(c.command.enter + 0.05, 'sparkle', 0.35);
+    add(c.command.enter, 'enter', 0.65);
+    add(c.command.enter + 0.05, 'sparkle', 0.4);
 
-    add(c.winget.badge, 'pop', 0.35, -0.3);
-    Object.values(c.winget.chips).forEach((t, i) => add(t, 'pop', 0.45, -0.5 + i * 0.08));
-    for (let i = 0; i < 7; i++) add(c.winget.allDone + i * 0.09, 'ding', 0.2, -0.5 + i * 0.08);
+    add(S.winget.start - 0.1, 'whoosh', 0.3, 0.3);
+    add(c.winget.badge, 'pop', 0.4, -0.3);
+    Object.values(c.winget.chips).forEach((t, i) => add(t, 'pop', 0.5, -0.5 + i * 0.08));
+    for (let i = 0; i < 7; i++) add(c.winget.allDone + i * 0.09, 'ding', 0.25, -0.5 + i * 0.08);
 
-    c.arch.cards.forEach((t, i) => add(t, 'flip', 0.4, -0.4 + i * 0.4));
-    add(c.arch.scan, 'scan', 0.3);
-    add(c.arch.detected, 'lock', 0.5, 0.4);
-    add(c.arch.compiler, 'pop', 0.35);
+    add(S.arch.start - 0.1, 'whoosh', 0.3, -0.3);
+    c.arch.cards.forEach((t, i) => add(t, 'flip', 0.45, -0.4 + i * 0.4));
+    add(c.arch.scan, 'scan', 0.35);
+    add(c.arch.detected, 'lock', 0.55, 0.4);
+    add(c.arch.compiler, 'pop', 0.4);
 
-    add(c.safe.folder + 0.05, 'pop', 0.35);
-    add(c.safe.relax, 'shimmer', 0.25);
-    add(c.safe.backup, 'whoosh', 0.25, 0.4);
-    add(c.safe.shield, 'chime', 0.4);
+    add(S.safe.start - 0.1, 'whoosh', 0.25, 0.3);
+    add(c.safe.folder + 0.05, 'pop', 0.4);
+    add(c.safe.relax, 'shimmer', 0.3);
+    add(c.safe.backup, 'whoosh', 0.3, 0.4);
+    add(c.safe.shield, 'chime', 0.45);
 
-    add(c.launch.termIn, 'whoosh', 0.25);
+    add(c.launch.termIn, 'whoosh', 0.3);
     c.launch.keys.forEach((t) => add(t, 'key', 0.5));
-    add(c.launch.enter, 'enter', 0.6);
-    add(c.launch.lazy, 'whoosh', 0.25, 0.3);
-    add(c.launch.editor, 'whoosh', 0.25, -0.3);
-    add(c.launch.editor + 0.75, 'pop', 0.2, 0.2);
+    add(c.launch.enter, 'enter', 0.65);
+    add(c.launch.reveal + 0.05, 'shimmer', 0.35);
+    add(c.launch.lazy, 'whoosh', 0.3, 0.3);
+    add(c.launch.editor, 'whoosh', 0.3, -0.3);
+    add(c.launch.editor + 0.75, 'pop', 0.25, 0.2);
 
-    add(S.cta.start - 0.1, 'whoosh', 0.25);
+    add(S.cta.start - 0.1, 'whoosh', 0.35);
     add(c.cta.subtitle, 'shimmer', 0.3);
-    add(c.cta.github, 'pop', 0.4, -0.2);
-    add(c.cta.command, 'pop', 0.35, 0.2);
+    add(c.cta.less, 'pop', 0.3, -0.2);
+    add(c.cta.more, 'pop', 0.35, 0.2);
+    add(c.cta.github, 'pop', 0.45, -0.2);
+    add(c.cta.command, 'pop', 0.4, 0.2);
     c.sfx = sfx.sort((a, b) => a.t - b.t);
     return c;
   }

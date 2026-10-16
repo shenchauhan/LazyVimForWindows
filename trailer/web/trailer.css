@@ -53,6 +53,7 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 #fx { pointer-events: none; }
 #vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, .55) 100%); }
 #fade { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; }
+#flash { position: absolute; inset: 0; opacity: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 40%, rgba(232, 238, 255, .95), rgba(125, 207, 255, .35) 45%, rgba(125, 207, 255, 0) 80%); }
 
 /* ---------- window chrome ---------- */
 .win {

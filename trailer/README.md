@@ -9,6 +9,8 @@ A ~70-second trailer for this project: upbeat and fun, but with the narration al
 
 Both are 1920×1080, 60 fps, H.264 + AAC. Poster frame: [`dist/poster.png`](dist/poster.png).
 
+There's also a music-free cut of the first, more energetic version of the trailer: [`dist/LazyVim-for-Windows-trailer-energetic-no-music.mp4`](dist/LazyVim-for-Windows-trailer-energetic-no-music.mp4). It has that version's picture, narration, and sound effects with the music removed. It was made from commit `c433571` by mixing the music stem at zero (`music: 0` in `scripts/audio.mjs`) and pairing the new soundtrack with that commit's original video.
+
 Everything in it is generated: the narration comes from **MAI-Voice-2.1-Flash** on Azure Speech, the music and sound effects are synthesized from code, and every frame is rendered in a headless browser. No stock footage, samples, or third-party music are used.
 
 ## 🧩 How it works

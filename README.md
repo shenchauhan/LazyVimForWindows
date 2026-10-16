@@ -6,7 +6,7 @@
 
 This project installs [Neovim](https://neovim.io/), the tools LazyVim needs, and the official [LazyVim starter configuration](https://github.com/LazyVim/starter). It is designed to make a fresh Windows setup feel more like a one-command adventure than a weekend project. 🚀
 
-🎬 **Watch the trailer** ([American](trailer/dist/LazyVim-for-Windows-trailer.mp4) or [British](trailer/dist/LazyVim-for-Windows-trailer-british.mp4) narration): a fun one-minute tour, narrated by MAI-Voice-2.1-Flash. See [`trailer/`](trailer/README.md) for how it's made.
+🎬 **[Watch the trailer](trailer/dist/LazyVim-for-Windows-trailer-energetic-no-music.mp4)**: a fun one-minute tour, narrated by MAI-Voice-2.1-Flash. See [`trailer/`](trailer/README.md) for how it's made and for the other versions.
 
 ## 🧰 What the script sets up
 
